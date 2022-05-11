@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/constants/app.colors.dart';
+import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 
 import 'src/app.dart';
 
@@ -19,7 +20,7 @@ void main() async {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.vermilion,
-          title: const Text('Ocurrió un error'),
+          title: Text('Ocurrió un error'.hardcoded),
         ),
         body: Center(child: Text(details.toString())),
       );

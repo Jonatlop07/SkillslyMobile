@@ -7,7 +7,7 @@ import 'not_found_screen.dart';
 import 'route_paths.dart';
 import 'routes.dart';
 
-import 'package:skillsly_ma/src/core/services/auth_service.dart';
+import 'package:skillsly_ma/src/core/services/fake_auth_service.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authService = ref.watch(authServiceProvider);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skillsly_ma/src/core/constants/palette.dart';
+import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 
 import 'core/constants/app.colors.dart';
 import 'core/routing/app.router.dart';
@@ -16,7 +17,7 @@ class MyApp extends ConsumerWidget {
       routeInformationParser: goRouter.routeInformationParser,
       debugShowCheckedModeBanner: false,
       restorationScopeId: 'app',
-      onGenerateTitle: (BuildContext context) => 'Skillsly',
+      onGenerateTitle: (BuildContext context) => 'Skillsly'.hardcoded,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Palette.primary,

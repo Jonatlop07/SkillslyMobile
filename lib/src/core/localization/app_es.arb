@@ -1,0 +1,15 @@
+{
+  "appTitle": "Skillsly",
+  "appBarTitle": "Skillsly",
+  "@appBarTitle": {
+    "description": "El título que se muestra en la barra de menú"
+  },
+  "ok": "OK",
+  "anErrorOcurred": "Ocurrió un error",
+  "signIn": "Iniciar sesión",
+  "@signIn": {
+    "description": "Título de la pantalla de autenticación"
+  },
+  "notFound404": "404 - Página no encontrada",
+  "goAuth": "Autenticarse"
+}

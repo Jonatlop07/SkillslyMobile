@@ -9,12 +9,17 @@ import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 /// the text.
 /// @param onPressed - callback to be called when the button is pressed.
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton(
-      {Key? key, required this.text, this.isLoading = false, this.onPressed})
-      : super(key: key);
+  const PrimaryButton({
+    Key? key,
+    required this.text,
+    this.isLoading = false,
+    this.onPressed,
+  }) : super(key: key);
+
   final String text;
   final bool isLoading;
   final VoidCallback? onPressed;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -26,10 +31,7 @@ class PrimaryButton extends StatelessWidget {
             : Text(
                 text,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6!
-                    .copyWith(color: AppColors.beige),
+                style: Theme.of(context).textTheme.headline6!.copyWith(color: AppColors.beige),
               ),
       ),
     );

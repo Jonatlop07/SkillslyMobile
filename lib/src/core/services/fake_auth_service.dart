@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skillsly_ma/src/core/domain/app_user.dart';
 import 'package:skillsly_ma/src/core/utils/in_memory_store.dart';
 
-class AuthService {
+class FakeAuthService {
   final _authState = InMemoryStore<AppUser?>(null);
 
   Stream<AppUser?> authStateChanges() => _authState.stream;
@@ -37,8 +37,8 @@ class AuthService {
   }
 }
 
-final authServiceProvider = Provider<AuthService>((ref) {
-  final auth = AuthService();
+final authServiceProvider = Provider<FakeAuthService>((ref) {
+  final auth = FakeAuthService();
   ref.onDispose(() => auth.dispose());
   return auth;
 });

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
+import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 
 /// Placeholder widget showing a message and CTA to go back to the home screen.
 class EmptyPlaceholderWidget extends StatelessWidget {
-  const EmptyPlaceholderWidget({Key? key, required this.message})
-      : super(key: key);
+  const EmptyPlaceholderWidget({Key? key, required this.message}) : super(key: key);
   final String message;
 
   @override
@@ -27,7 +27,7 @@ class EmptyPlaceholderWidget extends StatelessWidget {
             gapH32,
             PrimaryButton(
               onPressed: () => context.goNamed(RoutePaths.signIn),
-              text: 'Iniciar sesión',
+              text: 'Autenticarse'.hardcoded,
             )
           ],
         ),
