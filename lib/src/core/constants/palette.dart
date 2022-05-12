@@ -32,4 +32,20 @@ class Palette {
       900: Color(0xff000000)
     },
   );
+
+  static const MaterialColor tertiary = MaterialColor(
+    0xfffc6662, // 0% comes in here, this will be color picked if no shade is selected when defining a Color property which doesn’t require a swatch.
+    <int, Color>{
+      50: Color(0xfffc7572), //10%
+      100: Color(0xfffd8581), //20%
+      200: Color(0xfffd9491), //30%
+      300: Color(0xfffda3a1), //40%
+      400: Color(0xfffeb3b1), //50%
+      500: Color(0xfffec2c0), //60%
+      600: Color(0xfffed1d0), //70%
+      700: Color(0xfffee0e0), //80%
+      800: Color(0xfffff0ef), //90%
+      900: Color(0xffffffff)
+    },
+  );
 }

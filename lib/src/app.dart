@@ -1,9 +1,9 @@
+import 'package:skillsly_ma/src/core/constants/app.colors.dart';
+import 'package:skillsly_ma/src/core/constants/palette.dart';
+import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
+import 'package:skillsly_ma/src/core/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skillsly_ma/src/core/constants/palette.dart';
-
-import 'core/constants/app.colors.dart';
-import 'core/routing/app.router.dart';
 
 class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -16,13 +16,11 @@ class MyApp extends ConsumerWidget {
       routeInformationParser: goRouter.routeInformationParser,
       debugShowCheckedModeBanner: false,
       restorationScopeId: 'app',
-      onGenerateTitle: (BuildContext context) => 'Skillsly',
+      onGenerateTitle: (BuildContext context) => 'Skillsly'.hardcoded,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Palette.primary,
-        ).copyWith(
-          secondary: Palette.secondary,
-        ),
+        ).copyWith(secondary: Palette.secondary, tertiary: Palette.tertiary),
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.beige,
