@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/core/routing/routes.dart';
+import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 
 /// Placeholder widget showing a message and CTA to go back to the home screen.
 class EmptyPlaceholderWidget extends StatelessWidget {
@@ -26,7 +26,7 @@ class EmptyPlaceholderWidget extends StatelessWidget {
             ),
             gapH32,
             PrimaryButton(
-              onPressed: () => context.goNamed(Routes.signIn),
+              onPressed: () => context.go(RoutePaths.signIn),
               text: 'Autenticarse'.hardcoded,
             )
           ],

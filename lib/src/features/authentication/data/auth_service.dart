@@ -18,8 +18,12 @@ class AuthService {
   Stream<AppUser?> authStateChanges() => _authState.stream;
   AppUser? get currentUser => _authState.value;
 
+  bool isLoggedIn() {
+    return currentUser != null;
+  }
+
   Future<void> signIn(String email, String password) async {
-    /*final signInUser = gql('''
+    final signInUser = gql('''
       mutation login(
         \$email: String,
         \$password: String
@@ -32,11 +36,12 @@ class AuthService {
         ) {
           id
           email
+          access_token
         }
       }
     ''');
 
-    final result = await _client.mutate(
+    final result = await client.mutate(
       MutationOptions(
         document: signInUser,
         variables: {'email': email, 'password': password},
@@ -47,25 +52,11 @@ class AuthService {
     } else {
       final signInResponse = SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
       _createNewUser(signInResponse);
-    }*/
-    final m = gql('''
-    mutation createCategory(\$cate: String!, \$desc: String!) {
-      createCategory(category: {
-        name: \$cate,
-        description: \$desc
-      }) {
-        name
-      }
     }
-    ''');
-    final result = await client.mutate(MutationOptions(
-        document: m,
-        variables: const {'cate': 'Categoria Jeisson', 'desc': 'Descripción - Categoría Jeisson'}));
-    print(result);
   }
 
   Future<void> signUp(SignUpDetails signUpDetails) async {
-    /*final signUpUser = gql('''
+    final signUpUser = gql('''
       mutation createUserAccount(
         \$email: String!,
         \$password: String!,
@@ -84,11 +75,10 @@ class AuthService {
         ) {
           id
           email
-          access_token
         }
       }
     ''');
-    final result = await _client.mutate(
+    final result = await client.mutate(
       MutationOptions(
         document: signUpUser,
         variables: signUpDetails.toMap(),
@@ -99,7 +89,7 @@ class AuthService {
     } else if (result.isLoading && result.data != null) {
     } else {
       signIn(signUpDetails.email, signUpDetails.password);
-    }*/
+    }
   }
 
   void dispose() => {};
@@ -113,13 +103,8 @@ class AuthService {
   }
 }
 
-final authServiceProvider = Provider<AuthService>(
-    (ref) => AuthService(ref.watch(graphQLClientProvider))
-    //final client = ref.watch(graphQLClientProvider);
-    /*final auth = AuthService(/*client.value*/);
-  ref.onDispose(() => auth.dispose());
-  return auth;*/
-    );
+final authServiceProvider =
+    Provider<AuthService>((ref) => AuthService(ref.watch(graphQLClientProvider)));
 
 final authStateChangesProvider = StreamProvider.autoDispose<AppUser?>((ref) {
   final authRepository = ref.watch(authServiceProvider);

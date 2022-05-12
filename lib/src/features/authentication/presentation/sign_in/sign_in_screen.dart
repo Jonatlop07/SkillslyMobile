@@ -1,8 +1,11 @@
+import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
+import 'package:skillsly_ma/src/core/routing/route_paths.dart';
+import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -117,12 +120,13 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
                 key: SignInScreen.emailKey,
                 controller: _emailController,
                 decoration: InputDecoration(
-                    labelText: 'Correo'.hardcoded,
-                    hintText: 'test_email1@test.com'.hardcoded,
-                    enabled: !state.isLoading,
-                    hintStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-                        fontSize: Sizes.p12)),
+                  labelText: 'Correo electrónico'.hardcoded,
+                  hintText: 'example_email1@example.com'.hardcoded,
+                  enabled: !state.isLoading,
+                  hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                      fontSize: Sizes.p12),
+                ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (email) => !_submitted ? null : state.emailErrorText(email ?? ''),
                 autocorrect: false,
@@ -162,7 +166,7 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
               CustomTextButton(
                 text: state.secondaryButtonText,
                 onPressed:
-                    state.isLoading ? null : () => _updateFormType(state.secondaryActionFormType),
+                    state.isLoading ? null : () => GoRouter.of(context).go(RoutePaths.signUp),
               ),
             ],
           ),

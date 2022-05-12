@@ -1,7 +1,7 @@
 import 'routes.dart';
 
 class RoutePaths {
-  static const home = '/${Routes.home}';
+  static const home = '/';
   static const signIn = '/${Routes.signIn}';
   static const signUp = '/${Routes.signUp}';
   static const passwordRecovery = '/${Routes.passwordRecovery}';
