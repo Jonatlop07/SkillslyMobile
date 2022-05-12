@@ -1,9 +1,9 @@
+import 'package:skillsly_ma/src/features/authentication/domain/app_user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skillsly_ma/src/core/domain/app_user.dart';
-import 'package:skillsly_ma/src/core/utils/in_memory_store.dart';
+import 'package:skillsly_ma/src/shared/utils/app_in_memory_store.dart';
 
-class FakeAuthService {
-  final _authState = InMemoryStore<AppUser?>(null);
+class FakeAuthRepository {
+  final _authState = AppInMemoryStore<AppUser?>(null);
 
   Stream<AppUser?> authStateChanges() => _authState.stream;
   AppUser? get currentUser => _authState.value;
@@ -15,7 +15,7 @@ class FakeAuthService {
     }
   }
 
-  Future<void> createUser(String email, String password) async {
+  Future<void> createUserWithEmailAndPassword(String email, String password) async {
     if (currentUser == null) {
       _createNewUser(email);
     }
@@ -31,19 +31,19 @@ class FakeAuthService {
 
   void _createNewUser(String email) {
     _authState.value = AppUser(
-      id: email.split('').reversed.join(),
+      uid: email.split('').reversed.join(),
       email: email,
     );
   }
 }
 
-final authServiceProvider = Provider<FakeAuthService>((ref) {
-  final auth = FakeAuthService();
+final authRepositoryProvider = Provider<FakeAuthRepository>((ref) {
+  final auth = FakeAuthRepository();
   ref.onDispose(() => auth.dispose());
   return auth;
 });
 
 final authStateChangesProvider = StreamProvider.autoDispose<AppUser?>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  return authService.authStateChanges();
+  final authRepository = ref.watch(authRepositoryProvider);
+  return authRepository.authStateChanges();
 });

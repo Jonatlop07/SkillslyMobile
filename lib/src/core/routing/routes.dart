@@ -1,5 +1,5 @@
 class Routes {
-  static const auth = 'auth';
+  static const home = 'home';
   static const signIn = 'signIn';
   static const signUp = 'signUp';
   static const passwordRecovery = 'passwordRecovery';
