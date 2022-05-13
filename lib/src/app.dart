@@ -12,6 +12,11 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final goRouter = ref.watch(goRouterProvider);
     return MaterialApp.router(
+      builder: (context, child) => SafeArea(
+        child: child!,
+        top: true,
+        maintainBottomViewPadding: true,
+      ),
       routerDelegate: goRouter.routerDelegate,
       routeInformationParser: goRouter.routeInformationParser,
       debugShowCheckedModeBanner: false,

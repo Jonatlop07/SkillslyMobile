@@ -6,6 +6,7 @@ import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
+import 'package:skillsly_ma/src/core/constants/palette.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_up_details.dart';
@@ -252,8 +253,8 @@ class _SignUpContentsState extends ConsumerState<SignUpContents> {
                   children: <Widget>[
                     CustomTextButton(
                       text: 'Selecciona una fecha de nacimiento',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
+                      style: const TextStyle(
+                        color: Palette.secondary,
                       ),
                       onPressed: _presentDateTimePicker,
                     ),
