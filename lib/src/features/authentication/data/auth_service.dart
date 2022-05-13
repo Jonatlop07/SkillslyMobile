@@ -11,6 +11,7 @@ import 'package:skillsly_ma/src/shared/utils/app_in_memory_store.dart';
 
 class AuthService {
   AuthService(this._ref);
+
   final Ref _ref;
 
   final _authState = AppInMemoryStore<AppUser?>(null);

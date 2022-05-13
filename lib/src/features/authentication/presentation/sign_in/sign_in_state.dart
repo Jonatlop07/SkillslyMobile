@@ -8,7 +8,7 @@ enum SignInFormType { signIn, twoFactorSignIn }
 /// Mixin class to be used for client-side email & password validation
 mixin EmailAndPasswordValidators {
   final StringValidator emailSubmitValidator = EmailSubmitRegexValidator();
-  final StringValidator passwordSignInSubmitValidator = PasswordSubmitRegexValidator();
+  final StringValidator passwordSubmitValidator = PasswordSubmitRegexValidator();
 }
 
 /// State class for the email & password form.
@@ -82,7 +82,7 @@ extension SignInStateX on SignInState {
   }
 
   bool canSubmitPassword(String password) {
-    return passwordSignInSubmitValidator.isValid(password);
+    return passwordSubmitValidator.isValid(password);
   }
 
   String? emailErrorText(String email) {
