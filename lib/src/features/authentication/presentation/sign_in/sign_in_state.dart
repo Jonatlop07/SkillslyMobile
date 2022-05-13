@@ -1,7 +1,6 @@
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'string_validator.dart';
+import 'package:skillsly_ma/src/shared/utils/string_validator.dart';
 
 /// Form type for email & password authentication
 enum SignInFormType { signIn, twoFactorSignIn }
@@ -9,7 +8,7 @@ enum SignInFormType { signIn, twoFactorSignIn }
 /// Mixin class to be used for client-side email & password validation
 mixin EmailAndPasswordValidators {
   final StringValidator emailSubmitValidator = EmailSubmitRegexValidator();
-  final StringValidator passwordSignInSubmitValidator = NonEmptyStringValidator();
+  final StringValidator passwordSignInSubmitValidator = PasswordSubmitRegexValidator();
 }
 
 /// State class for the email & password form.

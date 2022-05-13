@@ -5,15 +5,14 @@ import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.d
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
-import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skillsly_ma/src/shared/utils/async_value_ui.dart';
+import 'package:skillsly_ma/src/shared/utils/string_validator.dart';
 
 import 'sign_in_state.dart';
-import 'string_validator.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({Key? key, required this.formType}) : super(key: key);
@@ -121,7 +120,7 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo electrónico'.hardcoded,
-                  hintText: 'example_email1@example.com'.hardcoded,
+                  hintText: 'ejemplo_correo1@ejemplo.com'.hardcoded,
                   enabled: !state.isLoading,
                   hintStyle: TextStyle(
                       color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
