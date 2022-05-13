@@ -15,7 +15,7 @@ class SignInController extends StateNotifier<SignInState> {
     state = state.copyWith(value: const AsyncValue.loading());
     final value = await AsyncValue.guard(() => _authenticate(email, password));
     state = state.copyWith(value: value);
-    return value.hasError == false;
+    return !value.hasError;
   }
 
   Future<void> _authenticate(String email, String password) {
