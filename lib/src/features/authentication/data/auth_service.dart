@@ -1,19 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/core/domain/app_user.dart';
+import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
+import 'package:skillsly_ma/src/features/authentication/data/request_exception.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_in_response.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_up_details.dart';
+import 'package:skillsly_ma/src/shared/state/auth_token_provider.dart';
 import 'package:skillsly_ma/src/shared/utils/app_in_memory_store.dart';
 
 class AuthService {
-  AuthService(this._client);
+  AuthService(this._ref);
+  final Ref _ref;
+
   final _authState = AppInMemoryStore<AppUser?>(null);
 
-  final ValueNotifier<GraphQLClient> _client;
-
-  GraphQLClient get client => _client.value;
+  GraphQLClient get client => _ref.read(graphQLClientProvider).value;
 
   Stream<AppUser?> authStateChanges() => _authState.stream;
   AppUser? get currentUser => _authState.value;
@@ -84,27 +86,37 @@ class AuthService {
         variables: signUpDetails.toMap(),
       ),
     );
-    print(result);
-    if (result.hasException) {
-    } else if (result.isLoading && result.data != null) {
+    if (result.hasException || (result.isLoading && result.data != null)) {
+      throw BackendRequestException(result.exception != null
+          ? result.exception.toString()
+          : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     } else {
       signIn(signUpDetails.email, signUpDetails.password);
     }
   }
 
+  void logOut() {
+    _setAuthState(null);
+  }
+
   void dispose() => {};
 
   void _createNewUser(SignInResponse signInResponse) {
-    _authState.value = AppUser(
+    AppUser user = AppUser(
       id: signInResponse.id,
       email: signInResponse.email,
       accessToken: signInResponse.accessToken,
     );
+    _setAuthState(user);
+  }
+
+  void _setAuthState(AppUser? user) {
+    _authState.value = user;
+    _ref.read(authStateProvider.notifier).state = user;
   }
 }
 
-final authServiceProvider =
-    Provider<AuthService>((ref) => AuthService(ref.watch(graphQLClientProvider)));
+final authServiceProvider = Provider<AuthService>((ref) => AuthService(ref));
 
 final authStateChangesProvider = StreamProvider.autoDispose<AppUser?>((ref) {
   final authRepository = ref.watch(authServiceProvider);

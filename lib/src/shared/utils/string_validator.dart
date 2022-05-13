@@ -53,7 +53,11 @@ class EmailEditingRegexValidator extends RegexValidator {
 }
 
 class EmailSubmitRegexValidator extends RegexValidator {
-  EmailSubmitRegexValidator() : super(regexSource: '^\\S+@\\S+\\.\\S+\$');
+  EmailSubmitRegexValidator()
+      : super(
+          regexSource:
+              '^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})\$',
+        );
 }
 
 class PasswordEditingRegexValidator extends RegexValidator {
@@ -61,7 +65,10 @@ class PasswordEditingRegexValidator extends RegexValidator {
 }
 
 class PasswordSubmitRegexValidator extends RegexValidator {
-  PasswordSubmitRegexValidator() : super(regexSource: '^\\S+@\\S+\\.\\S+\$');
+  PasswordSubmitRegexValidator()
+      : super(
+          regexSource: '^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~_]).{8,}\$',
+        );
 }
 
 class NonEmptyStringValidator extends StringValidator {
