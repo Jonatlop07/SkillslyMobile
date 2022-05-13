@@ -1,5 +1,7 @@
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
+import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
+import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_state.dart';
@@ -34,10 +36,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.signIn,
             name: Routes.signIn,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-              child: const SignInScreen(
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              const SignInScreen(
                 formType: SignInFormType.signIn,
               ),
             ),
@@ -45,21 +47,47 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.signUp,
             name: Routes.signUp,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-              child: const SignUpScreen(
-                formType: SignUpFormType.signUp,
-              ),
-            ),
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+                context,
+                state,
+                const SignUpScreen(
+                  formType: SignUpFormType.signUp,
+                )),
           ),
           GoRoute(
             path: Routes.feed,
             name: Routes.feed,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-              child: Scaffold(appBar: AppBar(title: Text('Feed'.hardcoded))),
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              Scaffold(
+                appBar: AppBar(title: Text('Feed'.hardcoded)),
+                drawer: const MainDrawer(),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: Routes.chat,
+            name: Routes.chat,
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              Scaffold(
+                appBar: AppBar(title: Text('Chat'.hardcoded)),
+                drawer: const MainDrawer(),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: Routes.account,
+            name: Routes.account,
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              Scaffold(
+                appBar: AppBar(title: Text('Mi cuenta'.hardcoded)),
+                drawer: const MainDrawer(),
+              ),
             ),
           ),
         ],
