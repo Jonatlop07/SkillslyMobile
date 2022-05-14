@@ -3,7 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/core/domain/app_user.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/features/authentication/data/request_exception.dart';
+import 'package:skillsly_ma/src/shared/exception/request_exception.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_in_response.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_up_details.dart';
 import 'package:skillsly_ma/src/shared/state/auth_token_provider.dart';
@@ -51,11 +51,14 @@ class AuthService {
       ),
     );
     if (result.hasException) {
-    } else if (result.isLoading && result.data != null) {
-    } else {
-      final signInResponse = SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
-      _createNewUser(signInResponse);
+      throw BackendRequestException(result.exception.toString());
     }
+    if (result.isLoading && result.data != null) {
+      throw BackendRequestException(
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+    }
+    final signInResponse = SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
+    _createNewUser(signInResponse);
   }
 
   Future<void> signUp(SignUpDetails signUpDetails) async {
@@ -87,13 +90,14 @@ class AuthService {
         variables: signUpDetails.toMap(),
       ),
     );
-    if (result.hasException || (result.isLoading && result.data != null)) {
-      throw BackendRequestException(result.exception != null
-          ? result.exception.toString()
-          : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
-    } else {
-      signIn(signUpDetails.email, signUpDetails.password);
+    if (result.hasException) {
+      throw BackendRequestException(result.exception.toString());
     }
+    if (result.isLoading && result.data != null) {
+      throw BackendRequestException(
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+    }
+    signIn(signUpDetails.email, signUpDetails.password);
   }
 
   void logOut() {

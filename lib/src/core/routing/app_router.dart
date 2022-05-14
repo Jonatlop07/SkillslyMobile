@@ -2,6 +2,8 @@ import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_state.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_state.dart';
@@ -84,9 +86,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => TransitionScreen.createFade(
               context,
               state,
-              Scaffold(
-                appBar: AppBar(title: Text('Mi cuenta'.hardcoded)),
-                drawer: const MainDrawer(),
+              const AccountDetailsScreen(
+                formType: AccountDetailsFormType.accountDetails,
               ),
             ),
           ),
