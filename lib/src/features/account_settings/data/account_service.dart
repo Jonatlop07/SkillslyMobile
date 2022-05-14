@@ -81,7 +81,7 @@ class AccountService {
       throw BackendRequestException(
           'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
-    return UserAccountDetails.fromJson(result.data?['user'] as Map<String, dynamic>);
+    return UserAccountDetails.fromJson(result.data?['updateUserAccount'] as Map<String, dynamic>);
   }
 }
 

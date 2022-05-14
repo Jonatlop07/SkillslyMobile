@@ -26,6 +26,7 @@ class AuthService {
   }
 
   Future<void> signIn(String email, String password) async {
+    print(password);
     final signInUser = gql('''
       mutation login(
         \$email: String,

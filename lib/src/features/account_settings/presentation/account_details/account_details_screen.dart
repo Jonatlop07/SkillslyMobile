@@ -75,21 +75,8 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
 
   @override
   void initState() {
-    _getUserAccountDetails().then(
-      (value) {
-        _emailController.value = TextEditingValue(
-          text: value.email,
-          selection: TextSelection.fromPosition(TextPosition(offset: value.email.length)),
-        );
-        _nameController.value = TextEditingValue(
-          text: value.name,
-          selection: TextSelection.fromPosition(TextPosition(offset: value.name.length)),
-        );
-        _dateOfBirth = dateOfBirthFormatter.parse(value.dateOfBirth);
-        _gender = value.gender;
-      },
-    );
     super.initState();
+    Future.microtask(() => _resetChanges());
   }
 
   @override
@@ -124,7 +111,7 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
     showDatePicker(
       context: context,
       initialDate: _dateOfBirth,
-      firstDate: dateOfBirthFormatter.parse('01/01/1900'),
+      firstDate: dateOfBirthFormatter.parse('01/01/1901'),
       lastDate: DateTime.now(),
       fieldLabelText: 'Fecha de nacimiento'.hardcoded,
       fieldHintText: 'Selecciona tu fecha de nacimiento'.hardcoded,
@@ -261,7 +248,9 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
                         if (_editing) _presentDateTimePicker;
                       },
                     ),
-                    Expanded(child: Text('Fecha de nacimiento: $dateOfBirth')),
+                    Expanded(
+                      child: Text('Fecha de nacimiento: $dateOfBirth'),
+                    ),
                   ],
                 ),
               ),
