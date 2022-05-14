@@ -54,27 +54,38 @@ extension AccountCredentialsStateX on AccountCredentialsState {
 
   // Getters
   String get primaryButtonText {
-    return 'Iniciar sesion'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return 'Actualizar credenciales'.hardcoded;
+    }
+    return 'Eliminar cuenta'.hardcoded;
   }
 
   String get secondaryButtonText {
-    return '¿No posees todavía una cuenta? Regístrate'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return '¿Deseas eliminar tu cuenta?'.hardcoded;
+    }
+    return '¿Deseas actualizar tus credenciales?'.hardcoded;
   }
 
-  AccountCredentialsFormType get secondaryActionFormType {
-    if (formType == AccountCredentialsFormType.deleteAccount) {
-      return AccountCredentialsFormType.updateCredentials;
-    } else {
+  AccountCredentialsFormType get alternativeActionFormType {
+    if (formType == AccountCredentialsFormType.updateCredentials) {
       return AccountCredentialsFormType.deleteAccount;
     }
+    return AccountCredentialsFormType.updateCredentials;
   }
 
   String get errorAlertTitle {
-    return 'Fallo en el inicio de sesión'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return 'Fallo al actualizar tus credenciales'.hardcoded;
+    }
+    return 'Fallo al eliminar tu cuenta'.hardcoded;
   }
 
   String get title {
-    return 'Inicia sesion'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return 'Actualización de credenciales'.hardcoded;
+    }
+    return 'Eliminación de la cuenta'.hardcoded;
   }
 
   bool canSubmitEmail(String email) {

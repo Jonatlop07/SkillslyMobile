@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
+import 'package:skillsly_ma/src/core/common_widgets/delete_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/constants/palette.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
+import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/account_settings/data/account_service.dart';
 import 'package:skillsly_ma/src/features/account_settings/domain/update_user_account_details.dart';
 import 'package:skillsly_ma/src/features/account_settings/domain/user_account_details.dart';
@@ -170,10 +173,6 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
     }
   }
 
-  void _updateFormType(AccountDetailsFormType formType) {
-    ref.read(accountDetailsControllerProvider(widget.formType).notifier).updateFormType(formType);
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(
@@ -300,16 +299,18 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
                       onPressed: state.isLoading ? null : () => _toggleEditing(),
                     ),
               if (_editing)
-                PrimaryButton(
+                OutlinedActionButtonWithIcon(
                   text: state.applyAccountDetailsUpdatesButtonText,
-                  isLoading: state.isLoading,
+                  color: Palette.secondary,
+                  iconData: Icons.update_outlined,
                   onPressed:
                       state.isLoading ? null : () => _submit(state).then((_) => _toggleEditing()),
                 ),
               gapH8,
               CustomTextButton(
-                text: state.changePasswordButtonText,
-                onPressed: state.isLoading ? null : () => {},
+                text: state.updateCredentialsButtonText,
+                onPressed:
+                    state.isLoading ? null : () => GoRouter.of(context).goNamed(Routes.credentials),
               ),
             ],
           ),

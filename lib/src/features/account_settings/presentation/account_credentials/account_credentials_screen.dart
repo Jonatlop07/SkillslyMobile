@@ -1,10 +1,10 @@
-import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
+import 'package:skillsly_ma/src/core/common_widgets/delete_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
+import 'package:skillsly_ma/src/core/constants/palette.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +26,7 @@ class AccountCredentialsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Autenticación'.hardcoded)),
+      appBar: AppBar(title: Text('Administración de la cuenta'.hardcoded)),
       body: AccountCredentialsContents(
         formType: formType,
       ),
@@ -37,11 +37,11 @@ class AccountCredentialsScreen extends StatelessWidget {
 class AccountCredentialsContents extends ConsumerStatefulWidget {
   const AccountCredentialsContents({
     Key? key,
-    this.onSignedIn,
+    this.onSubmit,
     required this.formType,
   }) : super(key: key);
 
-  final VoidCallback? onSignedIn;
+  final VoidCallback? onSubmit;
   final AccountCredentialsFormType formType;
 
   @override
@@ -76,7 +76,7 @@ class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsC
       );
       final success = await controller.submit(email, password);
       if (success) {
-        widget.onSignedIn?.call();
+        widget.onSubmit?.call();
       }
     }
   }
@@ -109,6 +109,19 @@ class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsC
       (_, state) => state.showAlertDialogOnError(context),
     );
     final state = ref.watch(accountCredentialsControllerProvider(widget.formType));
+    final actionButton = state.formType == AccountCredentialsFormType.deleteAccount
+        ? OutlinedActionButtonWithIcon(
+            text: state.primaryButtonText,
+            color: Palette.tertiary,
+            iconData: Icons.delete_forever_outlined,
+            onPressed: state.isLoading ? null : () => _submit(state),
+          )
+        : OutlinedActionButtonWithIcon(
+            text: state.primaryButtonText,
+            color: Palette.secondary,
+            iconData: Icons.update_outlined,
+            onPressed: state.isLoading ? null : () => _submit(state),
+          );
     return ResponsiveScrollableCard(
       child: FocusScope(
         node: _node,
@@ -127,8 +140,9 @@ class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsC
                   hintText: 'ejemplo_correo1@ejemplo.com'.hardcoded,
                   enabled: !state.isLoading,
                   hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
-                      fontSize: Sizes.p12),
+                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                    fontSize: Sizes.p12,
+                  ),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (email) => !_submitted ? null : state.emailErrorText(email ?? ''),
@@ -141,7 +155,7 @@ class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsC
                   ValidatorInputFormatter(editingValidator: EmailEditingRegexValidator()),
                 ],
               ),
-              gapH8,
+              gapH24,
               // Password field
               TextFormField(
                 key: AccountCredentialsScreen.passwordKey,
@@ -159,17 +173,13 @@ class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsC
                 keyboardAppearance: Brightness.light,
                 onEditingComplete: () => _passwordEditingComplete(state),
               ),
-              gapH8,
-              PrimaryButton(
-                text: state.primaryButtonText,
-                isLoading: state.isLoading,
-                onPressed: state.isLoading ? null : () => _submit(state),
-              ),
-              gapH8,
+              gapH24,
+              actionButton,
+              gapH24,
               CustomTextButton(
                 text: state.secondaryButtonText,
                 onPressed:
-                    state.isLoading ? null : () => GoRouter.of(context).goNamed(Routes.signUp),
+                    state.isLoading ? null : () => _updateFormType(state.alternativeActionFormType),
               ),
             ],
           ),

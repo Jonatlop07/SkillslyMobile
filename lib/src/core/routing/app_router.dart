@@ -2,6 +2,8 @@ import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_state.dart';
 import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_screen.dart';
 import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_state.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
@@ -22,7 +24,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: RoutePaths.home,
     debugLogDiagnostics: false,
     redirect: (state) {
-      print(state.subloc);
       final isLoggedIn = authService.isLoggedIn();
       final isLoggingIn = state.subloc == RoutePaths.signIn || state.subloc == RoutePaths.signUp;
       if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
@@ -82,16 +83,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
-            path: Routes.account,
-            name: Routes.account,
-            pageBuilder: (context, state) => TransitionScreen.createFade(
-              context,
-              state,
-              const AccountDetailsScreen(
-                formType: AccountDetailsFormType.accountDetails,
-              ),
-            ),
-          ),
+              path: Routes.account,
+              name: Routes.account,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const AccountDetailsScreen(
+                      formType: AccountDetailsFormType.accountDetails,
+                    ),
+                  ),
+              routes: [
+                GoRoute(
+                  path: Routes.credentials,
+                  name: Routes.credentials,
+                  pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const AccountCredentialsScreen(
+                      formType: AccountCredentialsFormType.updateCredentials,
+                    ),
+                  ),
+                ),
+              ]),
         ],
       ),
     ],

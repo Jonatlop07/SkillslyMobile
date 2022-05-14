@@ -13,18 +13,16 @@ class AccountCredentialsController extends StateNotifier<AccountCredentialsState
 
   Future<bool> submit(String email, String password) async {
     state = state.copyWith(value: const AsyncValue.loading());
-    final value = await AsyncValue.guard(() => _authenticate(email, password));
+    final value = await AsyncValue.guard(() => _submit(password, email));
     state = state.copyWith(value: value);
     return !value.hasError;
   }
 
-  Future<void> _authenticate(String email, String password) {
-    switch (state.formType) {
-      case AccountCredentialsFormType.updateCredentials:
-        return accountService.updateCredentials(email, password);
-      case AccountCredentialsFormType.deleteAccount:
-        return accountService.deleteAccount(password);
+  Future<void> _submit(String password, String? email) {
+    if (state.formType == AccountCredentialsFormType.deleteAccount) {
+      return accountService.deleteAccount(password);
     }
+    return accountService.updateCredentials(email, password);
   }
 
   void updateFormType(AccountCredentialsFormType formType) {

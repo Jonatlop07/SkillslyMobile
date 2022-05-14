@@ -74,8 +74,8 @@ extension AccountDetailsStateX on AccountDetailsState {
     return 'Cancelar edición'.hardcoded;
   }
 
-  String get changePasswordButtonText {
-    return '¿Quieres cambiar tu contraseña?'.hardcoded;
+  String get updateCredentialsButtonText {
+    return '¿Quieres administrar tus credenciales?'.hardcoded;
   }
 
   AccountDetailsFormType get secondaryActionFormType {

@@ -95,11 +95,6 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
     _submit(state);
   }
 
-  void _updateFormType(SignInFormType formType) {
-    ref.read(signInControllerProvider(widget.formType).notifier).updateFormType(formType);
-    _passwordController.clear();
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(

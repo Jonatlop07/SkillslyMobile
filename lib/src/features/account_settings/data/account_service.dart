@@ -87,7 +87,36 @@ class AccountService {
     return UserAccountDetails.fromJson(result.data?['updateUserAccount'] as Map<String, dynamic>);
   }
 
-  Future<void> updateCredentials(String? email, String? password) async {}
+  Future<void> updateCredentials(String? email, String? password) async {
+    final updateCredentials = gql('''
+      mutation updateCredentials(
+        \$user_id: ID!,
+        \$email: String,
+        \$password: String
+      ) {
+        updateCredentials(
+          user_id: \$user_id,
+          email: \$email,
+          password: \$password
+        ) {
+          email
+        }
+      }
+    ''');
+    final result = await _client.mutate(
+      MutationOptions(
+        document: updateCredentials,
+        variables: {'user_id': _userId, 'email': email, 'password': password},
+      ),
+    );
+    if (result.hasException) {
+      throw BackendRequestException(result.exception.toString());
+    }
+    if (result.isLoading && result.data != null) {
+      throw BackendRequestException(
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+    }
+  }
 
   Future<void> deleteAccount(String password) async {
     final deleteAccount = gql('''
@@ -95,10 +124,10 @@ class AccountService {
         \$user_id: ID!,
         \$password: String
       ) {
-        deleteUserAccount() {
+        deleteUserAccount(
           user_id: \$user_id,
           password: \$password
-        } {
+        ) {
           email
         }
       }
@@ -116,6 +145,11 @@ class AccountService {
       throw BackendRequestException(
           'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
+    _deleteAuthState();
+  }
+
+  void _deleteAuthState() {
+    _authStateAccessor.getAuthStateController().state = null;
   }
 }
 
