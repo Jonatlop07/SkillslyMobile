@@ -149,9 +149,6 @@ class _SignUpContentsState extends ConsumerState<SignUpContents> {
       _node.previousFocus();
       return;
     }
-    if (state.canSubmitGender(gender)) {
-      _submit(state);
-    }
   }
 
   void _updateFormType(SignUpFormType formType) {

@@ -245,7 +245,7 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
                           ? const TextStyle(color: Palette.secondary)
                           : const TextStyle(color: Colors.grey),
                       onPressed: () {
-                        if (_editing) _presentDateTimePicker;
+                        if (_editing) _presentDateTimePicker();
                       },
                     ),
                     Expanded(
@@ -286,6 +286,7 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
               _editing
                   ? CustomTextButton(
                       text: state.cancelEditAccountDetailsButtonText,
+                      style: const TextStyle(color: Palette.tertiary),
                       onPressed: state.isLoading
                           ? null
                           : () async {
@@ -295,6 +296,7 @@ class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents>
                     )
                   : CustomTextButton(
                       text: state.editAccountDetailsButtonText,
+                      style: const TextStyle(color: Palette.secondary),
                       onPressed: state.isLoading ? null : () => _toggleEditing(),
                     ),
               if (_editing)

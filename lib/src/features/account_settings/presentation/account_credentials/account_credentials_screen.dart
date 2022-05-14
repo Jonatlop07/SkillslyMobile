@@ -4,21 +4,20 @@ import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
-import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skillsly_ma/src/shared/utils/async_value_ui.dart';
 import 'package:skillsly_ma/src/shared/utils/string_validator.dart';
 
-import 'sign_in_state.dart';
+import 'account_credentials_controller.dart';
+import 'account_credentials_state.dart';
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({Key? key, required this.formType}) : super(key: key);
+class AccountCredentialsScreen extends StatelessWidget {
+  const AccountCredentialsScreen({Key? key, required this.formType}) : super(key: key);
 
-  final SignInFormType formType;
+  final AccountCredentialsFormType formType;
 
   // * Keys for testing using find.byKey()
   static const emailKey = Key('email');
@@ -28,29 +27,28 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Autenticación'.hardcoded)),
-      body: SignInContents(
+      body: AccountCredentialsContents(
         formType: formType,
-        onSignedIn: () => GoRouter.of(context).go(RoutePaths.feed),
       ),
     );
   }
 }
 
-class SignInContents extends ConsumerStatefulWidget {
-  const SignInContents({
+class AccountCredentialsContents extends ConsumerStatefulWidget {
+  const AccountCredentialsContents({
     Key? key,
     this.onSignedIn,
     required this.formType,
   }) : super(key: key);
 
   final VoidCallback? onSignedIn;
-  final SignInFormType formType;
+  final AccountCredentialsFormType formType;
 
   @override
-  ConsumerState<SignInContents> createState() => _SignInContentsState();
+  ConsumerState<AccountCredentialsContents> createState() => _AccountCredentialsContentsState();
 }
 
-class _SignInContentsState extends ConsumerState<SignInContents> {
+class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsContents> {
   final _formKey = GlobalKey<FormState>();
   final _node = FocusScopeNode();
   final _emailController = TextEditingController();
@@ -69,11 +67,13 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
     super.dispose();
   }
 
-  Future<void> _submit(SignInState state) async {
+  Future<void> _submit(AccountCredentialsState state) async {
     setState(() => _submitted = true);
     // only submit the form if validation passes
     if (_formKey.currentState!.validate()) {
-      final controller = ref.read(signInControllerProvider(widget.formType).notifier);
+      final controller = ref.read(
+        accountCredentialsControllerProvider(widget.formType).notifier,
+      );
       final success = await controller.submit(email, password);
       if (success) {
         widget.onSignedIn?.call();
@@ -81,13 +81,13 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
     }
   }
 
-  void _emailEditingComplete(SignInState state) {
+  void _emailEditingComplete(AccountCredentialsState state) {
     if (state.canSubmitEmail(email)) {
       _node.nextFocus();
     }
   }
 
-  void _passwordEditingComplete(SignInState state) {
+  void _passwordEditingComplete(AccountCredentialsState state) {
     if (!state.canSubmitEmail(email)) {
       _node.previousFocus();
       return;
@@ -95,18 +95,20 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
     _submit(state);
   }
 
-  void _updateFormType(SignInFormType formType) {
-    ref.read(signInControllerProvider(widget.formType).notifier).updateFormType(formType);
+  void _updateFormType(AccountCredentialsFormType formType) {
+    ref
+        .read(accountCredentialsControllerProvider(widget.formType).notifier)
+        .updateFormType(formType);
     _passwordController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(
-      signInControllerProvider(widget.formType).select((state) => state.value),
+      accountCredentialsControllerProvider(widget.formType).select((state) => state.value),
       (_, state) => state.showAlertDialogOnError(context),
     );
-    final state = ref.watch(signInControllerProvider(widget.formType));
+    final state = ref.watch(accountCredentialsControllerProvider(widget.formType));
     return ResponsiveScrollableCard(
       child: FocusScope(
         node: _node,
@@ -118,7 +120,7 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
               gapH8,
               // Email field
               TextFormField(
-                key: SignInScreen.emailKey,
+                key: AccountCredentialsScreen.emailKey,
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo electrónico'.hardcoded,
@@ -142,7 +144,7 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
               gapH8,
               // Password field
               TextFormField(
-                key: SignInScreen.passwordKey,
+                key: AccountCredentialsScreen.passwordKey,
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: state.passwordLabelText,

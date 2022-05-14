@@ -22,10 +22,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: RoutePaths.home,
     debugLogDiagnostics: false,
     redirect: (state) {
+      print(state.subloc);
       final isLoggedIn = authService.isLoggedIn();
       final isLoggingIn = state.subloc == RoutePaths.signIn || state.subloc == RoutePaths.signUp;
       if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
-      if (isLoggingIn) return RoutePaths.feed;
+      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home) return RoutePaths.feed;
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authService.authStateChanges()),
