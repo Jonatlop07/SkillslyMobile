@@ -3,6 +3,8 @@ import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
+import 'package:skillsly_ma/src/features/authentication/presentation/search/search_screen.dart';
+import 'package:skillsly_ma/src/features/authentication/presentation/search/search_users_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_state.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: false,
     redirect: (state) {
       final isLoggedIn = authService.isLoggedIn();
-      final isLoggingIn = state.subloc == RoutePaths.signIn || state.subloc == RoutePaths.signUp;
+      final isLoggingIn = state.subloc == RoutePaths.signIn ||
+          state.subloc == RoutePaths.signUp;
       if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
       if (isLoggingIn) return RoutePaths.feed;
       return null;
@@ -61,7 +64,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               context,
               state,
               Scaffold(
-                appBar: AppBar(title: Text('Feed'.hardcoded)),
+                appBar: AppBar(
+                  title: Text('Feed'.hardcoded),
+                  actions: <Widget>[
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.search),
+                    )
+                  ],
+                ),
                 drawer: const MainDrawer(),
               ),
             ),
@@ -73,7 +84,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               context,
               state,
               Scaffold(
-                appBar: AppBar(title: Text('Chat'.hardcoded)),
+                appBar: AppBar(
+                  title: Text('Chat'.hardcoded),
+                  actions: <Widget>[
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.search),
+                    )
+                  ],
+                ),
                 drawer: const MainDrawer(),
               ),
             ),
@@ -85,11 +104,30 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               context,
               state,
               Scaffold(
-                appBar: AppBar(title: Text('Mi cuenta'.hardcoded)),
+                appBar: AppBar(
+                  title: Text('Mi cuenta'.hardcoded),
+                  actions: <Widget>[
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(Icons.search),
+                    )
+                  ],
+                ),
                 drawer: const MainDrawer(),
               ),
             ),
           ),
+          GoRoute(
+            path: Routes.search,
+            name: Routes.search,
+            pageBuilder: (context, state) =>
+                TransitionScreen.createFade(context, state, SearchScreen()),
+          ),
+          GoRoute(
+              path: Routes.searchUser,
+              name: Routes.searchUser,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context, state, SearchUserScreen())),
         ],
       ),
     ],
