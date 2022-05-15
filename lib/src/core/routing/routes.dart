@@ -6,4 +6,5 @@ class Routes {
   static const passwordReset = 'passwordReset';
   static const account = 'account';
   static const feed = 'feed';
+  static const userConversations = 'conversations';
 }
