@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
-import 'package:skillsly_ma/src/core/common_widgets/delete_button.dart';
+import 'package:skillsly_ma/src/core/common_widgets/outlined_action_button_with_icon.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
