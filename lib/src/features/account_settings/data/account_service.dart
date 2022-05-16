@@ -71,15 +71,7 @@ class AccountService {
     final result = await _client.mutate(
       MutationOptions(
         document: updateUserAccountDetails,
-        variables: {
-          'user_id': _userId,
-          'updates': {
-            'email': accountDetails.email,
-            'name': accountDetails.name,
-            'date_of_birth': accountDetails.dateOfBirth,
-            'gender': accountDetails.gender
-          }
-        },
+        variables: {'user_id': _userId, 'updates': accountDetails.toMap()},
       ),
     );
     if (result.hasException) {
@@ -87,8 +79,9 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
+      );
     }
 
     return UserAccountDetails.fromJson(
@@ -106,9 +99,7 @@ class AccountService {
           user_id: \$user_id,
           email: \$email,
           password: \$password
-        ) {
-          email
-        }
+        )
       }
     ''');
     final result = await _client.mutate(
@@ -122,8 +113,9 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
+      );
     }
   }
 
@@ -152,8 +144,9 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
+      );
     }
     _deleteAuthState();
   }
