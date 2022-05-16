@@ -7,6 +7,7 @@ class Routes {
   static const account = 'account';
   static const credentials = 'credentials';
   static const feed = 'feed';
+  static const posts = 'posts';
   static const chat = 'chat';
   static const searchUser = 'searchUser';
 }
