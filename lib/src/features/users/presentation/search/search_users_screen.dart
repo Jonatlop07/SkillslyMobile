@@ -25,13 +25,12 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
   bool _isLoadingUsers = true;
   bool _moreUsersToFetch = true;
   String previousInputControllerText = '';
-  int limit = 6;
+  int limit = 9;
   int offset = 0;
 
   @override
   void initState() {
     super.initState();
-    controller = ScrollController()..addListener(_scrollListener);
   }
 
   @override
@@ -41,9 +40,7 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
   }
 
   Future<List<SearchUserDetails>> _getUsers() {
-    print(userInputController.text);
     final searchService = ref.read(searchServiceProvider);
-
     return searchService.searchUser(userInputController.text,
         PaginationDetails(limit: limit, offset: offset));
   }
@@ -54,21 +51,25 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
 
   void loadMoreUsers() async {
     List<SearchUserDetails> moreUsers = await _getUsers();
-    setState(() {
-      searchedUsers.addAll(moreUsers);
-      offset = offset + limit;
-    });
+    if (moreUsers.isEmpty) {
+      controller.removeListener(_scrollListener);
+    } else {
+      setState(() {
+        searchedUsers.addAll(moreUsers);
+        offset = offset + limit;
+      });
+    }
   }
 
   void searchUsers() async {
     if (previousInputControllerText != userInput) {
+      controller = ScrollController()..addListener(_scrollListener);
       offset = 0;
       List<SearchUserDetails> users = await _getUsers();
       setState(() {
         searchedUsers = users;
         offset = limit + offset;
         previousInputControllerText = userInput;
-        print(searchedUsers);
       });
     }
   }
@@ -108,9 +109,11 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
         body: Container(
           child: (searchedUsers.length > 0
               ? ListView.builder(
+                  controller: controller,
                   itemCount: searchedUsers.length,
                   itemBuilder: (ctx, index) {
                     return Card(
+                      elevation: 2,
                       child: ListTile(
                         leading: const CircleAvatar(
                             backgroundImage: NetworkImage(
@@ -166,47 +169,10 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
   }
 
   void _scrollListener() {
-    if (controller.position.extentAfter < 500) {
-      print('more');
+    if (controller.position.extentAfter < 100) {
       setState(() {
         loadMoreUsers();
       });
     }
   }
 }
-
-// ListView.builder(
-//   itemBuilder: (ctx, index) {
-//     return Card(
-//       elevation: 5,
-//       margin: EdgeInsets.symmetric(
-//         vertical: 8,
-//         horizontal: 5,
-//       ),
-//       child: ListTile(
-//         leading: CircleAvatar(
-//           radius: 30,
-//           child: Padding(
-//             padding: EdgeInsets.all(6),
-//             child: FittedBox(
-//               child: Text('\$${transactions[index].amount}'),
-//             ),
-//           ),
-//         ),
-//         title: Text(
-//           transactions[index].title,
-//           style: Theme.of(context).textTheme.title,
-//         ),
-//         subtitle: Text(
-//           DateFormat.yMMMd().format(transactions[index].date),
-//         ),
-//         trailing: IconButton(
-//           icon: Icon(Icons.delete),
-//           color: Theme.of(context).errorColor,
-//           onPressed: () => deleteTx(transactions[index].id),
-//         ),
-//       ),
-//     );
-//   },
-//   itemCount: transactions.length,
-// )

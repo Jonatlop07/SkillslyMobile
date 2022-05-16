@@ -19,9 +19,6 @@ class SearchService {
 
   Future<List<SearchUserDetails>> searchUser(
       String search_input, PaginationDetails? query_params) async {
-    print(search_input);
-    print(query_params?.limit);
-    print(query_params?.offset);
     final search_users = gql('''
       query users(\$search_params: SearchParams!){
         users(search_params: \$search_params){
@@ -35,8 +32,8 @@ class SearchService {
     final result =
         await _client.query(QueryOptions(document: search_users, variables: {
       'search_params': {
-        'name': search_input,
         'email': search_input,
+        'name': search_input,
         'limit': query_params?.limit,
         'offset': query_params?.offset
       }
