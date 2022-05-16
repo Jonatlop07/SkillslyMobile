@@ -82,7 +82,8 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+      );
     }
     return UserAccountDetails.fromJson(result.data?['updateUserAccount'] as Map<String, dynamic>);
   }
@@ -98,9 +99,7 @@ class AccountService {
           user_id: \$user_id,
           email: \$email,
           password: \$password
-        ) {
-          email
-        }
+        )
       }
     ''');
     final result = await _client.mutate(
@@ -114,7 +113,8 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+      );
     }
   }
 
@@ -143,7 +143,8 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+      );
     }
     _deleteAuthState();
   }
