@@ -2,9 +2,11 @@ import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_state.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_state.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
-import 'package:skillsly_ma/src/features/authentication/presentation/search/search_screen.dart';
-import 'package:skillsly_ma/src/features/authentication/presentation/search/search_users_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_state.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
-
+import '../../features/users/presentation/search/search_users_screen.dart';
 import 'not_found_screen.dart';
 import 'routes.dart';
 
@@ -26,7 +28,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isLoggingIn = state.subloc == RoutePaths.signIn ||
           state.subloc == RoutePaths.signUp;
       if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
-      if (isLoggingIn) return RoutePaths.feed;
+      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home)
+        return RoutePaths.feed;
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authService.authStateChanges()),
@@ -98,31 +101,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
-            path: Routes.account,
-            name: Routes.account,
-            pageBuilder: (context, state) => TransitionScreen.createFade(
-              context,
-              state,
-              Scaffold(
-                appBar: AppBar(
-                  title: Text('Mi cuenta'.hardcoded),
-                  actions: <Widget>[
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.search),
-                    )
-                  ],
+              path: Routes.account,
+              name: Routes.account,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const AccountDetailsScreen(
+                      formType: AccountDetailsFormType.accountDetails,
+                    ),
+                  ),
+              routes: [
+                GoRoute(
+                  path: Routes.credentials,
+                  name: Routes.credentials,
+                  pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const AccountCredentialsScreen(
+                      formType: AccountCredentialsFormType.updateCredentials,
+                    ),
+                  ),
                 ),
-                drawer: const MainDrawer(),
-              ),
-            ),
-          ),
-          GoRoute(
-            path: Routes.search,
-            name: Routes.search,
-            pageBuilder: (context, state) =>
-                TransitionScreen.createFade(context, state, SearchScreen()),
-          ),
+              ]),
           GoRoute(
               path: Routes.searchUser,
               name: Routes.searchUser,

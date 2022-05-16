@@ -135,11 +135,11 @@ class _SignUpContentsState extends ConsumerState<SignUpContents> {
   }
 
   void _nameEditingComplete(SignUpState state) {
-    if (!state.canSubmitPassword(name)) {
+    if (!state.canSubmitPassword(password)) {
       _node.previousFocus();
       return;
     }
-    if (!state.canSubmitName(email)) {
+    if (!state.canSubmitName(name)) {
       _node.nextFocus();
     }
   }
@@ -149,14 +149,6 @@ class _SignUpContentsState extends ConsumerState<SignUpContents> {
       _node.previousFocus();
       return;
     }
-    if (state.canSubmitGender(gender)) {
-      _submit(state);
-    }
-  }
-
-  void _updateFormType(SignUpFormType formType) {
-    ref.read(signUpControllerProvider(widget.formType).notifier).updateFormType(formType);
-    _passwordController.clear();
   }
 
   @override

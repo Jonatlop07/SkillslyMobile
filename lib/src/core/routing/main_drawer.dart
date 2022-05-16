@@ -59,9 +59,6 @@ class MainDrawer extends ConsumerWidget {
               final AuthService authService = ref.read(authServiceProvider);
               authService.logOut();
             }),
-            buildListTile('Search', Icons.search, () {
-              GoRouter.of(context).goNamed(Routes.search);
-            })
           ],
         ),
       ),

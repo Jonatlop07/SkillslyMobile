@@ -1,28 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
-import 'package:skillsly_ma/src/core/domain/app_user.dart';
+import 'package:skillsly_ma/src/shared/state/app_user.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/features/authentication/data/request_exception.dart';
+import 'package:skillsly_ma/src/shared/exception/request_exception.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_in_response.dart';
 import 'package:skillsly_ma/src/features/authentication/domain/sign_up_details.dart';
-import 'package:skillsly_ma/src/shared/state/auth_token_provider.dart';
-import 'package:skillsly_ma/src/shared/utils/app_in_memory_store.dart';
+import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
 class AuthService {
-  AuthService(this._ref);
+  AuthService(this._client, Ref ref)
+      : _authStateAccessor = AuthStateAccessor(ref);
 
-  final Ref _ref;
+  final GraphQLClient _client;
+  final AuthStateAccessor _authStateAccessor;
 
-  final _authState = AppInMemoryStore<AppUser?>(null);
-
-  GraphQLClient get client => _ref.read(graphQLClientProvider).value;
-
-  Stream<AppUser?> authStateChanges() => _authState.stream;
-  AppUser? get currentUser => _authState.value;
+  Stream<AppUser?> authStateChanges() =>
+      _authStateAccessor.getAuthStateController().stream;
+  AppUser? get currentUser => _authStateAccessor.getAuthStateController().state;
 
   bool isLoggedIn() {
-    return currentUser != null;
+    return _authStateAccessor.getAuthStateController().state != null;
   }
 
   Future<void> signIn(String email, String password) async {
@@ -44,18 +42,23 @@ class AuthService {
       }
     ''');
 
-    final result = await client.mutate(
+    final result = await _client.mutate(
       MutationOptions(
         document: signInUser,
         variables: {'email': email, 'password': password},
       ),
     );
     if (result.hasException) {
-    } else if (result.isLoading && result.data != null) {
-    } else {
-      final signInResponse = SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
-      _createNewUser(signInResponse);
+      throw BackendRequestException(result.exception.toString());
     }
+    if (result.isLoading && result.data != null) {
+      throw BackendRequestException(
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+              .hardcoded);
+    }
+    final signInResponse =
+        SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
+    _createNewUser(signInResponse);
   }
 
   Future<void> signUp(SignUpDetails signUpDetails) async {
@@ -81,19 +84,21 @@ class AuthService {
         }
       }
     ''');
-    final result = await client.mutate(
+    final result = await _client.mutate(
       MutationOptions(
         document: signUpUser,
         variables: signUpDetails.toMap(),
       ),
     );
-    if (result.hasException || (result.isLoading && result.data != null)) {
-      throw BackendRequestException(result.exception != null
-          ? result.exception.toString()
-          : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
-    } else {
-      signIn(signUpDetails.email, signUpDetails.password);
+    if (result.hasException) {
+      throw BackendRequestException(result.exception.toString());
     }
+    if (result.isLoading && result.data != null) {
+      throw BackendRequestException(
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+              .hardcoded);
+    }
+    signIn(signUpDetails.email, signUpDetails.password);
   }
 
   void logOut() {
@@ -112,12 +117,14 @@ class AuthService {
   }
 
   void _setAuthState(AppUser? user) {
-    _authState.value = user;
-    _ref.read(authStateProvider.notifier).state = user;
+    _authStateAccessor.getAuthStateController().state = user;
   }
 }
 
-final authServiceProvider = Provider<AuthService>((ref) => AuthService(ref));
+final authServiceProvider = Provider<AuthService>((ref) {
+  final client = ref.watch(graphQLClientProvider).value;
+  return AuthService(client, ref);
+});
 
 final authStateChangesProvider = StreamProvider.autoDispose<AppUser?>((ref) {
   final authRepository = ref.watch(authServiceProvider);
