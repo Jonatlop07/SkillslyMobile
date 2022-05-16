@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skillsly_ma/src/shared/utils/string_validator.dart';
 
 /// Form type for email & password authentication
-enum SignInFormType { signIn, twoFactorSignIn }
+enum AccountCredentialsFormType { updateCredentials, deleteAccount }
 
 /// Mixin class to be used for client-side email & password validation
 mixin EmailAndPasswordValidators {
@@ -12,69 +12,80 @@ mixin EmailAndPasswordValidators {
 }
 
 /// State class for the email & password form.
-class SignInState with EmailAndPasswordValidators {
-  SignInState({
-    this.formType = SignInFormType.signIn,
+class AccountCredentialsState with EmailAndPasswordValidators {
+  AccountCredentialsState({
+    this.formType = AccountCredentialsFormType.updateCredentials,
     this.value = const AsyncValue.data(null),
   });
 
-  final SignInFormType formType;
+  final AccountCredentialsFormType formType;
   final AsyncValue<void> value;
 
   bool get isLoading => value.isLoading;
 
-  SignInState copyWith({
-    SignInFormType? formType,
+  AccountCredentialsState copyWith({
+    AccountCredentialsFormType? formType,
     AsyncValue<void>? value,
   }) {
-    return SignInState(
+    return AccountCredentialsState(
       formType: formType ?? this.formType,
       value: value ?? this.value,
     );
   }
 
   @override
-  String toString() => 'SignInState(formType: $formType, value: $value)';
+  String toString() => 'AccountCredentialsState(formType: $formType, value: $value)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is SignInState && other.formType == formType && other.value == value;
+    return other is AccountCredentialsState && other.formType == formType && other.value == value;
   }
 
   @override
   int get hashCode => formType.hashCode ^ value.hashCode;
 }
 
-extension SignInStateX on SignInState {
+extension AccountCredentialsStateX on AccountCredentialsState {
   String get passwordLabelText {
     return 'Contraseña'.hardcoded;
   }
 
   // Getters
   String get primaryButtonText {
-    return 'Iniciar sesion'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return 'Actualizar credenciales'.hardcoded;
+    }
+    return 'Eliminar cuenta'.hardcoded;
   }
 
   String get secondaryButtonText {
-    return '¿No posees todavía una cuenta? Regístrate'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return '¿Deseas eliminar tu cuenta?'.hardcoded;
+    }
+    return '¿Deseas actualizar tus credenciales?'.hardcoded;
   }
 
-  SignInFormType get secondaryActionFormType {
-    if (formType == SignInFormType.twoFactorSignIn) {
-      return SignInFormType.signIn;
-    } else {
-      return SignInFormType.twoFactorSignIn;
+  AccountCredentialsFormType get alternativeActionFormType {
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return AccountCredentialsFormType.deleteAccount;
     }
+    return AccountCredentialsFormType.updateCredentials;
   }
 
   String get errorAlertTitle {
-    return 'Fallo en el inicio de sesión'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return 'Fallo al actualizar tus credenciales'.hardcoded;
+    }
+    return 'Fallo al eliminar tu cuenta'.hardcoded;
   }
 
   String get title {
-    return 'Inicia sesion'.hardcoded;
+    if (formType == AccountCredentialsFormType.updateCredentials) {
+      return 'Actualización de credenciales'.hardcoded;
+    }
+    return 'Eliminación de la cuenta'.hardcoded;
   }
 
   bool canSubmitEmail(String email) {

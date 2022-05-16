@@ -1,5 +1,11 @@
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
+import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
+import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_state.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_screen.dart';
+import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_state.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_state.dart';
@@ -8,8 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
-import 'package:skillsly_ma/src/features/chat/presentation/user_conversations/user_conversations.screen.dart';
 
+import '../../features/chat/presentation/user_conversations/user_conversations.screen.dart';
 import 'not_found_screen.dart';
 import 'routes.dart';
 
@@ -20,9 +26,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: false,
     redirect: (state) {
       final isLoggedIn = authService.isLoggedIn();
-      final isLoggingIn = state.subloc == RoutePaths.userConversations || state.subloc == RoutePaths.userConversations;
-      if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.userConversations;
-      if (isLoggingIn) return RoutePaths.userConversations;
+      final isLoggingIn = state.subloc == RoutePaths.signIn || state.subloc == RoutePaths.signUp;
+      if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
+      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home) return RoutePaths.feed;
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authService.authStateChanges()),
@@ -35,10 +41,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.signIn,
             name: Routes.signIn,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-              child: const SignInScreen(
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              const SignInScreen(
                 formType: SignInFormType.signIn,
               ),
             ),
@@ -46,32 +52,57 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.signUp,
             name: Routes.signUp,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-              child: const SignUpScreen(
-                formType: SignUpFormType.signUp,
-              ),
-            ),
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+                context,
+                state,
+                const SignUpScreen(
+                  formType: SignUpFormType.signUp,
+                )),
           ),
           GoRoute(
             path: Routes.feed,
             name: Routes.feed,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-              child: Scaffold(appBar: AppBar(title: Text('Feed'.hardcoded))),
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              Scaffold(
+                appBar: AppBar(title: Text('Feed'.hardcoded)),
+                drawer: const MainDrawer(),
+              ),
             ),
           ),
           GoRoute(
-            path: Routes.userConversations,
-            name: Routes.userConversations,
-            pageBuilder: (context, state) => MaterialPage(
-              key: state.pageKey,
-              fullscreenDialog: true,
-                child: const UserConversationsScreen()
+            path: Routes.chat,
+            name: Routes.chat,
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              const UserConversationsScreen()
             ),
           ),
+          GoRoute(
+              path: Routes.account,
+              name: Routes.account,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const AccountDetailsScreen(
+                      formType: AccountDetailsFormType.accountDetails,
+                    ),
+                  ),
+              routes: [
+                // GoRoute(
+                //   path: Routes.credentials,
+                //   name: Routes.credentials,
+                //   pageBuilder: (context, state) => TransitionScreen.createFade(
+                //     context,
+                //     state,
+                //     const AccountCredentialsScreen(
+                //       formType: AccountCredentialsFormType.updateCredentials,
+                //     ),
+                //   ),
+                // ),
+              ]),
         ],
       ),
     ],

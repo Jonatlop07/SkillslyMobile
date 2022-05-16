@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:skillsly_ma/src/shared/state/auth_token_provider.dart';
+import 'package:skillsly_ma/src/shared/state/auth_state_provider.dart';
 
 final graphQLClientProvider = Provider<ValueNotifier<GraphQLClient>>((ref) {
   final String? token = ref.watch(authStateProvider.select((value) => value?.accessToken));

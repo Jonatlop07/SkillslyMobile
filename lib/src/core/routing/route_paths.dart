@@ -6,8 +6,7 @@ class RoutePaths {
   static const signUp = '/${Routes.signUp}';
   static const passwordRecovery = '/${Routes.passwordRecovery}';
   static const passwordReset = '/${Routes.passwordReset}';
-
   static const account = '/${Routes.account}';
   static const feed = '/${Routes.feed}';
-  static const userConversations = '/${Routes.userConversations}';
+  static const credentials = '/${Routes.account}/${Routes.credentials}';
 }

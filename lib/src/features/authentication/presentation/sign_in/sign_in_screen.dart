@@ -5,6 +5,7 @@ import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.d
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
+import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +30,7 @@ class SignInScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Autenticación'.hardcoded)),
       body: SignInContents(
         formType: formType,
+        onSignedIn: () => GoRouter.of(context).go(RoutePaths.feed),
       ),
     );
   }
@@ -91,11 +93,6 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
       return;
     }
     _submit(state);
-  }
-
-  void _updateFormType(SignInFormType formType) {
-    ref.read(signInControllerProvider(widget.formType).notifier).updateFormType(formType);
-    _passwordController.clear();
   }
 
   @override
@@ -165,7 +162,7 @@ class _SignInContentsState extends ConsumerState<SignInContents> {
               CustomTextButton(
                 text: state.secondaryButtonText,
                 onPressed:
-                    state.isLoading ? null : () => GoRouter.of(context).go(RoutePaths.signUp),
+                    state.isLoading ? null : () => GoRouter.of(context).goNamed(Routes.signUp),
               ),
             ],
           ),
