@@ -66,15 +66,7 @@ class AccountService {
     final result = await _client.mutate(
       MutationOptions(
         document: updateUserAccountDetails,
-        variables: {
-          'user_id': _userId,
-          'updates': {
-            'email': accountDetails.email,
-            'name': accountDetails.name,
-            'date_of_birth': accountDetails.dateOfBirth,
-            'gender': accountDetails.gender
-          }
-        },
+        variables: {'user_id': _userId, 'updates': accountDetails.toMap()},
       ),
     );
     if (result.hasException) {

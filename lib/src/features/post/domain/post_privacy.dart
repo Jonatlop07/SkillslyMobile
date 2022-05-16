@@ -1,0 +1,1 @@
+enum PostPrivacy { private, public }

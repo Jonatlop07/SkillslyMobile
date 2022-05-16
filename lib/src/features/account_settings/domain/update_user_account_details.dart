@@ -10,4 +10,13 @@ class UpdateUserAccountDetails {
   final String name;
   final String dateOfBirth;
   final String gender;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'email': email,
+      'name': name,
+      'date_of_birth': dateOfBirth,
+      'gender': gender,
+    };
+  }
 }
