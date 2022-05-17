@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
+import 'package:skillsly_ma/src/features/comments/presentation/comments/comments_list.dart';
 import '../../features/post/presenter/post.dart';
 import '../../features/users/presentation/search/search_users_screen.dart';
 import 'not_found_screen.dart';
@@ -77,6 +78,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     )
                   ],
                 ),
+                body: const CustomScrollView(slivers: [
+                  CommentsList(
+                    post_id: '85aa0628-2bd5-452d-accd-efb0a7c249e0',
+                  )
+                ]),
                 drawer: const MainDrawer(),
               ),
             ),

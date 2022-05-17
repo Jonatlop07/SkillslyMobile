@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_content_details.dart';
-import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
 import 'package:skillsly_ma/src/features/comments/domain/inner_comment_details.dart';
 import 'package:skillsly_ma/src/features/comments/domain/search_comments_pagination.dart';
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
@@ -16,7 +15,7 @@ class InnerCommentsService {
 
   String? get _userId => _authStateAccessor.getAuthStateController().state?.id;
 
-  Future<InnerCommentDetails> getInnerComments(
+  Future<List<InnerCommentDetails>> getInnerComments(
       String comment_id, SearchCommentsPaginationDetails? query_params) async {
     final limit = query_params?.limit ?? 0;
     final page = query_params?.page ?? 0;
@@ -45,8 +44,12 @@ class InnerCommentsService {
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
-    return InnerCommentDetails.fromJson(
-        result.data?['queryInnerComments'] as Map<String, dynamic>);
+    final queryResult = result.data?['queryInnerComments'];
+    final List<InnerCommentDetails> innerComments = [];
+    queryResult.forEach((comment) =>
+        {innerComments.add(InnerCommentDetails.fromJson(comment))});
+
+    return innerComments;
   }
 
   Future<InnerCommentDetails> createInnerComment(

@@ -15,7 +15,7 @@ class CommentsService {
 
   String? get _userId => _authStateAccessor.getAuthStateController().state?.id;
 
-  Future<CommentDetails> getComments(
+  Future<List<CommentDetails>> getComments(
       String post_id, SearchCommentsPaginationDetails? query_params) async {
     final limit = query_params?.limit ?? 0;
     final page = query_params?.page ?? 0;
@@ -44,8 +44,13 @@ class CommentsService {
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
-    return CommentDetails.fromJson(
-        result.data?['queryComments'] as Map<String, dynamic>);
+
+    final queryResult = result.data?['queryComments'];
+    final List<CommentDetails> comments = [];
+    queryResult
+        .forEach((comment) => {comments.add(CommentDetails.fromJson(comment))});
+
+    return comments;
   }
 
   Future<CommentDetails> createComment(
