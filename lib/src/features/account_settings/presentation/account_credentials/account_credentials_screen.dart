@@ -1,6 +1,5 @@
 import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
-import 'package:skillsly_ma/src/core/common_widgets/delete_button.dart';
-import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
+import 'package:skillsly_ma/src/core/common_widgets/outlined_action_button_with_icon.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/constants/palette.dart';
@@ -27,15 +26,15 @@ class AccountCredentialsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Administración de la cuenta'.hardcoded)),
-      body: AccountCredentialsContents(
+      body: _AccountCredentialsContents(
         formType: formType,
       ),
     );
   }
 }
 
-class AccountCredentialsContents extends ConsumerStatefulWidget {
-  const AccountCredentialsContents({
+class _AccountCredentialsContents extends ConsumerStatefulWidget {
+  const _AccountCredentialsContents({
     Key? key,
     this.onSubmit,
     required this.formType,
@@ -45,10 +44,10 @@ class AccountCredentialsContents extends ConsumerStatefulWidget {
   final AccountCredentialsFormType formType;
 
   @override
-  ConsumerState<AccountCredentialsContents> createState() => _AccountCredentialsContentsState();
+  ConsumerState<_AccountCredentialsContents> createState() => _AccountCredentialsContentsState();
 }
 
-class _AccountCredentialsContentsState extends ConsumerState<AccountCredentialsContents> {
+class _AccountCredentialsContentsState extends ConsumerState<_AccountCredentialsContents> {
   final _formKey = GlobalKey<FormState>();
   final _node = FocusScopeNode();
   final _emailController = TextEditingController();
