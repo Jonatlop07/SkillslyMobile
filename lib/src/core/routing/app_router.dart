@@ -14,7 +14,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
-
+import '../../features/post/presenter/post.dart';
+import '../../features/users/presentation/search/search_users_screen.dart';
 import '../../features/chat/presentation/user_conversations/user_conversations.screen.dart';
 import 'not_found_screen.dart';
 import 'routes.dart';
@@ -91,18 +92,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     ),
                   ),
               routes: [
-                // GoRoute(
-                //   path: Routes.credentials,
-                //   name: Routes.credentials,
-                //   pageBuilder: (context, state) => TransitionScreen.createFade(
-                //     context,
-                //     state,
-                //     const AccountCredentialsScreen(
-                //       formType: AccountCredentialsFormType.updateCredentials,
-                //     ),
-                //   ),
-                // ),
+                GoRoute(
+                  path: Routes.credentials,
+                  name: Routes.credentials,
+                  pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const AccountCredentialsScreen(
+                      formType: AccountCredentialsFormType.updateCredentials,
+                    ),
+                  ),
+                ),
               ]),
+          GoRoute(
+              path: Routes.searchUser,
+              name: Routes.searchUser,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context, state, SearchUserScreen())),
+          GoRoute(
+              path: '${Routes.posts}/:id',
+              name: Routes.posts,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context, state, Post(userId: state.params['id'] ?? '')))
         ],
       ),
     ],

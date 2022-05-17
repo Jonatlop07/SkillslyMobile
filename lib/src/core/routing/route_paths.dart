@@ -8,5 +8,6 @@ class RoutePaths {
   static const passwordReset = '/${Routes.passwordReset}';
   static const account = '/${Routes.account}';
   static const feed = '/${Routes.feed}';
+  static const searchUser = '/${Routes.searchUser}';
   static const credentials = '/${Routes.account}/${Routes.credentials}';
 }

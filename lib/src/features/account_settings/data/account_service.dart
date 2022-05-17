@@ -8,7 +8,8 @@ import 'package:skillsly_ma/src/shared/exception/request_exception.dart';
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
 class AccountService {
-  AccountService(this._client, Ref ref) : _authStateAccessor = AuthStateAccessor(ref);
+  AccountService(this._client, Ref ref)
+      : _authStateAccessor = AuthStateAccessor(ref);
 
   final GraphQLClient _client;
   final AuthStateAccessor _authStateAccessor;
@@ -38,13 +39,17 @@ class AccountService {
       throw BackendRequestException(
         result.exception != null
             ? result.exception.toString()
-            : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+            : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+                .hardcoded,
       );
     }
-    return UserAccountDetails.fromJson(result.data?['user'] as Map<String, dynamic>);
+    print(result.data?['user']);
+    return UserAccountDetails.fromJson(
+        result.data?['user'] as Map<String, dynamic>);
   }
 
-  Future<UserAccountDetails> updateAccountDetails(UpdateUserAccountDetails accountDetails) async {
+  Future<UserAccountDetails> updateAccountDetails(
+      UpdateUserAccountDetails accountDetails) async {
     final updateUserAccountDetails = gql('''
       mutation updateUserAccount(
         \$user_id: ID!,
@@ -66,15 +71,7 @@ class AccountService {
     final result = await _client.mutate(
       MutationOptions(
         document: updateUserAccountDetails,
-        variables: {
-          'user_id': _userId,
-          'updates': {
-            'email': accountDetails.email,
-            'name': accountDetails.name,
-            'date_of_birth': accountDetails.dateOfBirth,
-            'gender': accountDetails.gender
-          }
-        },
+        variables: {'user_id': _userId, 'updates': accountDetails.toMap()},
       ),
     );
     if (result.hasException) {
@@ -82,9 +79,13 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
+      );
     }
-    return UserAccountDetails.fromJson(result.data?['updateUserAccount'] as Map<String, dynamic>);
+
+    return UserAccountDetails.fromJson(
+        result.data?['updateUserAccount'] as Map<String, dynamic>);
   }
 
   Future<void> updateCredentials(String? email, String? password) async {
@@ -98,9 +99,7 @@ class AccountService {
           user_id: \$user_id,
           email: \$email,
           password: \$password
-        ) {
-          email
-        }
+        )
       }
     ''');
     final result = await _client.mutate(
@@ -114,7 +113,9 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
+      );
     }
   }
 
@@ -143,7 +144,9 @@ class AccountService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
+      );
     }
     _deleteAuthState();
   }
