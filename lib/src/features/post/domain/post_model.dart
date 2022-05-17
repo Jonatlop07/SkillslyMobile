@@ -6,7 +6,7 @@ import 'post_content_element.dart';
 class PostModel {
   PostModel({
     required this.id,
-    required this.owner,
+    this.owner,
     required this.description,
     required this.createdAt,
     this.updatedAt,
@@ -15,7 +15,7 @@ class PostModel {
   });
 
   final String id;
-  final PostOwner owner;
+  final PostOwner? owner;
   final String description;
   final String createdAt;
   final String? updatedAt;
@@ -23,13 +23,13 @@ class PostModel {
   final List<PostContentElement> contents;
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
-    final List<Map<String, dynamic>> jsonContents = json['content_element'];
+    final List<dynamic> jsonContents = json['content_element'];
     return PostModel(
       id: json['id'],
       owner: PostOwner.fromJson(json['owner']),
       description: json['description'],
       createdAt: json['created_at'],
-      privacy: json['privacy'] as PostPrivacy,
+      privacy: PostPrivacy.values.firstWhere((p) => p.name == json['privacy']),
       contents: jsonContents
           .map(
             (content) => PostContentElement.fromJson(content),

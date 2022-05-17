@@ -5,8 +5,9 @@ class Post extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveCenter(
-        child: Row(
-      children: [],
-    ));
+      child: Row(
+        children: [],
+      ),
+    );
   }
 }
