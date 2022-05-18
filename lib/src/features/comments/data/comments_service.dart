@@ -36,8 +36,8 @@ class CommentsService {
         await _client.query(QueryOptions(document: query_comments, variables: {
       'post_id': post_id,
       'comments_pagination': {
-        'limit': limit,
         'page': page,
+        'limit': limit,
       }
     }));
 
@@ -46,6 +46,7 @@ class CommentsService {
     }
 
     final queryResult = result.data?['queryComments'];
+
     final List<CommentDetails> comments = [];
     queryResult
         .forEach((comment) => {comments.add(CommentDetails.fromJson(comment))});
@@ -75,6 +76,8 @@ class CommentsService {
       },
       'post_id': post_id,
     }));
+
+    print(result);
 
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());

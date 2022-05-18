@@ -14,9 +14,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
+import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/comments_list.dart';
+import 'package:skillsly_ma/src/features/comments/presentation/comments/edit_comment/edit_comment_screen.dart';
 import '../../features/post/presenter/post.dart';
 import '../../features/users/presentation/search/search_users_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/create_post/create_post_screen.dart';
+
 import 'not_found_screen.dart';
 import 'routes.dart';
 
@@ -66,26 +70,26 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: Routes.feed,
             name: Routes.feed,
             pageBuilder: (context, state) => TransitionScreen.createFade(
-              context,
-              state,
-              Scaffold(
-                appBar: AppBar(
-                  title: Text('Feed'.hardcoded),
-                  actions: <Widget>[
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.search),
-                    )
-                  ],
-                ),
-                body: const CustomScrollView(slivers: [
-                  CommentsList(
-                    post_id: '85aa0628-2bd5-452d-accd-efb0a7c249e0',
-                  )
-                ]),
-                drawer: const MainDrawer(),
-              ),
-            ),
+                context,
+                state,
+                Scaffold(
+                  appBar: AppBar(
+                    title: Text('Feed'.hardcoded),
+                    actions: <Widget>[
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(Icons.search),
+                      )
+                    ],
+                  ),
+                  body: Container(
+                      child: const CommentsList(
+                    post_id: '8ba10a14-9337-48dc-811a-9d43955e183c',
+                  )),
+                  drawer: const MainDrawer(),
+
+                  // const CreatePostScreen(),
+                )),
           ),
           GoRoute(
             path: Routes.chat,
@@ -136,10 +140,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) => TransitionScreen.createFade(
                   context, state, SearchUserScreen())),
           GoRoute(
-              path: '${Routes.posts}/:id',
+              path: '${Routes.posts}',
               name: Routes.posts,
               pageBuilder: (context, state) => TransitionScreen.createFade(
-                  context, state, Post(userId: state.params['id'] ?? '')))
+                  context, state, Post(userId: ''))),
+          GoRoute(
+              path: Routes.editComment,
+              name: Routes.editComment,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  EditCommentScreen(
+                    comment_details: state.extra! as CommentDetails,
+                  )))
         ],
       ),
     ],

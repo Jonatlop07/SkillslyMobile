@@ -13,8 +13,9 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveCenter(
-        child: Row(
-      children: [],
-    ));
+      child: Row(
+        children: [],
+      ),
+    );
   }
 }

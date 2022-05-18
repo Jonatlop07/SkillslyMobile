@@ -4,20 +4,26 @@ import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/features/post/domain/new_post_details.dart';
 import 'package:skillsly_ma/src/features/post/domain/post_model.dart';
+import 'package:skillsly_ma/src/features/post/domain/post_owner.dart';
 import 'package:skillsly_ma/src/features/post/domain/post_updates.dart';
+import 'package:skillsly_ma/src/features/post/domain/user_post_collection.dart';
 import 'package:skillsly_ma/src/shared/exception/request_exception.dart';
+import 'package:skillsly_ma/src/shared/state/app_user.dart';
+import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
 class PostService {
-  PostService(this._client);
+  PostService(this._client, Ref ref)
+      : _authStateAccessor = AuthStateAccessor(ref);
 
   final GraphQLClient _client;
+  final AuthStateAccessor _authStateAccessor;
+  AppUser? get _user => _authStateAccessor.getAuthStateController().state;
 
   Future<PostModel> getPostById(String postId) async {
     final postById = gql('''
       query postById(\$post_id: ID!) {
         postById(post_id: \$post_id) {
           id
-          owner_id
           description
           created_at
           updated_at
@@ -43,19 +49,21 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
-    return PostModel.fromJson(result.data?['postsById'] as Map<String, dynamic>);
+    final Map<String, dynamic> post = result.data?['postById'];
+    post['owner'] = {'id': _user!.id, 'name': 'Yo'};
+    return PostModel.fromJson(post);
   }
 
-  Future<List<PostModel>> postsOfUser(String userId) async {
+  Future<UserPostCollection> postsOfUser(String userId) async {
     final postsByOwnerId = gql('''
       query postsByOwnerId(\$owner_id: String!) {
         postsByOwnerId(owner_id: \$owner_id) {
           posts {
             id
-            owner_id
             description
             created_at
             updated_at
@@ -67,8 +75,8 @@ class PostService {
             }
           }
           owner {
-            id: ID!
-            name: String!
+            id
+            name
           }
         }
       }
@@ -86,11 +94,17 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
-    final List<Map<String, dynamic>> posts = result.data?['postsByOwnerId'];
-    return posts.map((post) => PostModel.fromJson(post)).toList();
+    final List<Map<String, dynamic>> posts =
+        result.data?['postsByOwnerId']['posts'];
+    final Map<String, dynamic> owner = result.data?['postsByOwnerId']['owner'];
+    return UserPostCollection(
+      posts: posts.map((post) => PostModel.fromJson(post)).toList(),
+      owner: PostOwner.fromJson(owner),
+    );
   }
 
   Future<PostModel> createPost(NewPostDetails newPostDetails) async {
@@ -98,7 +112,6 @@ class PostService {
       mutation createPost(\$post_details: NewPostInputData!) {
         createPost(post_data: \$post_details) {
           id
-          owner_id
           description
           created_at
           privacy
@@ -113,18 +126,24 @@ class PostService {
     final result = await _client.mutate(
       MutationOptions(
         document: createPost,
-        variables: {'post_details': newPostDetails},
+        variables: {'post_details': newPostDetails.toMap(_user!.id)},
       ),
     );
+
+    print(result.data);
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
-    return PostModel.fromJson(result.data?['createPost'] as Map<String, dynamic>);
+    final Map<String, dynamic> createdPost = result.data?['createPost'];
+    createdPost['owner'] = {'id': _user!.id, 'name': 'Yo'};
+    return PostModel.fromJson(
+        result.data?['createPost'] as Map<String, dynamic>);
   }
 
   Future<PostModel> updatePost(PostUpdates postUpdates) async {
@@ -132,7 +151,6 @@ class PostService {
       mutation updatePost(\$post_updates: UpdatePostInputData!) {
         updatePost(post_data: \$post_updates) {
           id
-          owner_id
           description
           created_at
           privacy
@@ -155,10 +173,14 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
-    return PostModel.fromJson(result.data?['updatePost'] as Map<String, dynamic>);
+    final Map<String, dynamic> updatedPost = result.data?['updatePost'];
+    updatedPost['owner'] = {'id': _user!.id, 'name': 'Yo'};
+    return PostModel.fromJson(
+        result.data?['updatePost'] as Map<String, dynamic>);
   }
 
   Future<void> deletePost(String postId) async {
@@ -180,7 +202,8 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
   }
@@ -188,5 +211,5 @@ class PostService {
 
 final postServiceProvider = Provider<PostService>((ref) {
   final client = ref.watch(graphQLClientProvider).value;
-  return PostService(client);
+  return PostService(client, ref);
 });
