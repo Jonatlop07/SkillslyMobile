@@ -29,6 +29,12 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => {
+        GoRouter.of(context).goNamed(Routes.chat, params: {
+          "userId": widget.members[0].user_id,
+          "conversationId": widget.conversationID
+        })
+      },
       onLongPress: () => {_showActionSheet(context, widget, ref)},
       child: Container(
         padding:
@@ -53,7 +59,7 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.members[0].user_id,
+                            widget.conversationID,
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(

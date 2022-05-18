@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/async_value_widget.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
+import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/chat/data/chat_service.dart';
 import 'package:skillsly_ma/src/features/chat/domain/conversation.dart';
 import 'package:skillsly_ma/src/features/chat/presentation/conversation/conversation.screen.dart';
@@ -41,47 +43,53 @@ class UserConversationsScreen extends ConsumerWidget {
                             .secondary
                             .withOpacity(0.05),
                       ),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.add,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 20,
-                          ),
-                          const SizedBox(
-                            width: 2,
-                          ),
-                          Text(
-                            "Crear".hardcoded,
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      child: GestureDetector(
+                        onTap: (){
+                          GoRouter.of(context).goNamed(Routes.searchUser);
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.add,
+                              color: Theme.of(context).colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(
+                              width: 2,
+                            ),
+                            Text(
+                              "Crear".hardcoded,
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
                     )
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Busca un usuario".hardcoded,
-                  hintStyle: TextStyle(color: Colors.grey.shade600),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  contentPadding: const EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.grey.shade100)),
-                ),
-              ),
+            const Padding(
+              padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+            //   child: TextField(
+            //     enabled: false,
+            //     decoration: InputDecoration(
+            //       hintText: "Busca un usuario".hardcoded,
+            //       hintStyle: TextStyle(color: Colors.grey.shade600),
+            //       prefixIcon: Icon(
+            //         Icons.search,
+            //         color: Colors.grey.shade600,
+            //         size: 20,
+            //       ),
+            //       filled: true,
+            //       fillColor: Colors.grey.shade100,
+            //       contentPadding: const EdgeInsets.all(8),
+            //       enabledBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(20),
+            //           borderSide: BorderSide(color: Colors.grey.shade100)),
+            //     ),
+            //   ),
             ),
             AsyncValueWidget<List<Conversation>>(
               value: conversationsList,

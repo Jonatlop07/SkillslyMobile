@@ -11,7 +11,8 @@ import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
 class MainDrawer extends ConsumerWidget {
   const MainDrawer({Key? key}) : super(key: key);
 
-  Widget buildListTile(String title, IconData icon, void Function()? tapHandler) {
+  Widget buildListTile(
+      String title, IconData icon, void Function()? tapHandler) {
     return ListTile(
       leading: Icon(
         icon,
@@ -49,7 +50,7 @@ class MainDrawer extends ConsumerWidget {
               GoRouter.of(context).goNamed(Routes.feed);
             }),
             buildListTile('Chat', Icons.add_comment_rounded, () {
-              GoRouter.of(context).goNamed(Routes.chat);
+              GoRouter.of(context).goNamed(Routes.conversations);
             }),
             buildListTile('Mi Cuenta', Icons.account_circle_rounded, () {
               GoRouter.of(context).goNamed(Routes.account);
@@ -57,7 +58,7 @@ class MainDrawer extends ConsumerWidget {
             buildListTile('Cerrar sesión', Icons.logout, () {
               final AuthService authService = ref.read(authServiceProvider);
               authService.logOut();
-            })
+            }),
           ],
         ),
       ),
