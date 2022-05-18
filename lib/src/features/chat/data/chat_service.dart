@@ -79,7 +79,7 @@ class ChatService {
         },
       ),
     );
-    // print(result);
+    print(result);
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
@@ -134,7 +134,7 @@ class ChatService {
 
   Stream<List<Conversation>> getConversationsCollection() async* {
     final String userID = currentUser!.id;
-    // print(userID);
+    print(userID);
     final getConversationsCollection = gql('''
     query getConversationsCollection (
      \$userID: String!,
@@ -168,7 +168,7 @@ class ChatService {
           'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
               .hardcoded);
     }
-    // print(result.data);
+    print(result.data);
     yield ConversationCollection.getConversationsCollection(
             result.data!['getConversationsCollection'] as List<dynamic>)
         .conversationCollection;

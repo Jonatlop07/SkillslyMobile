@@ -59,7 +59,7 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.members[0].user_id,
+                            widget.conversationID,
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(

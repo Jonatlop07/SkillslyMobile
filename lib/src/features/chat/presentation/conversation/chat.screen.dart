@@ -72,7 +72,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        widget.userId,
+                        widget.conversationId,
                         style: const TextStyle(
                             fontSize: 13, fontWeight: FontWeight.w600),
                       ),
