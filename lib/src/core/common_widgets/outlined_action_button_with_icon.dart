@@ -18,11 +18,11 @@ class OutlinedActionButtonWithIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: Sizes.p48,
+      height: Sizes.p32,
       child: OutlinedButton.icon(
         icon: Icon(
           iconData,
-          size: Sizes.p32,
+          size: Sizes.p24,
         ),
         label: Text(text),
         style: OutlinedButton.styleFrom(

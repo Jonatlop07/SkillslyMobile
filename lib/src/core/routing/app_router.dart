@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
+import 'package:skillsly_ma/src/features/post/presenter/create_post/create_post_screen.dart';
 
 import '../../features/chat/presentation/user_conversations/user_conversations.screen.dart';
 import 'not_found_screen.dart';
@@ -65,10 +66,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => TransitionScreen.createFade(
               context,
               state,
-              Scaffold(
-                appBar: AppBar(title: Text('Feed'.hardcoded)),
-                drawer: const MainDrawer(),
-              ),
+              const CreatePostScreen(),
             ),
           ),
           GoRoute(
