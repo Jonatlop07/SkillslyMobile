@@ -15,6 +15,8 @@ import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
 import 'package:skillsly_ma/src/features/post/presenter/create_post/create_post_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/feed/feed_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/posts_of_user/posts_of_user_screen.dart';
 
 import 'not_found_screen.dart';
 import 'routes.dart';
@@ -65,8 +67,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => TransitionScreen.createFade(
               context,
               state,
-              const CreatePostScreen(),
+              const FeedScreen(),
             ),
+            routes: [
+              GoRoute(
+                path: Routes.createPost,
+                name: Routes.createPost,
+                pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  const CreatePostScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '${Routes.postsOfUser}/:ownerId',
+                name: Routes.postsOfUser,
+                pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  PostsOfUserScreen(ownerId: state.params['ownerId']!),
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: Routes.chat,

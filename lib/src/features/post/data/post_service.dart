@@ -41,6 +41,7 @@ class PostService {
         variables: {
           'post_id': postId,
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
@@ -54,6 +55,47 @@ class PostService {
     final Map<String, dynamic> post = result.data?['postById'];
     post['owner'] = {'id': _user!.id, 'name': 'Yo'};
     return PostModel.fromJson(post);
+  }
+
+  Future<List<PostModel>> getPostsOfFriends() async {
+    final postsByOwnerId = gql('''
+      query postsByOwnerId(\$owner_id: String!) {
+        postsByOwnerId(owner_id: \$owner_id) {
+          posts {
+            id
+            description
+            created_at
+            updated_at
+            privacy
+            content_element {
+              description
+              media_locator
+              media_type
+            }
+          }
+          owner {
+            id
+            name
+          }
+        }
+      }
+    ''');
+    final result = await _client.query(
+      QueryOptions(
+        document: postsByOwnerId,
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+    if (result.hasException) {
+      throw BackendRequestException(result.exception.toString());
+    }
+    if (result.isLoading && result.data != null) {
+      throw BackendRequestException(
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+      );
+    }
+    final List<dynamic> posts = result.data?['postsByOwnerId'];
+    return posts.map((post) => PostModel.fromJson(post)).toList();
   }
 
   Future<UserPostCollection> postsOfUser(String userId) async {
@@ -85,6 +127,7 @@ class PostService {
         variables: {
           'owner_id': userId,
         },
+        fetchPolicy: FetchPolicy.networkOnly,
       ),
     );
     if (result.hasException) {
@@ -95,10 +138,13 @@ class PostService {
         'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
       );
     }
-    final List<Map<String, dynamic>> posts = result.data?['postsByOwnerId']['posts'];
+    final List<dynamic> posts = result.data?['postsByOwnerId']['posts'];
     final Map<String, dynamic> owner = result.data?['postsByOwnerId']['owner'];
     return UserPostCollection(
-      posts: posts.map((post) => PostModel.fromJson(post)).toList(),
+      posts: posts.map((post) {
+        post['owner'] = {'id': '', 'name': ''};
+        return PostModel.fromJson(post);
+      }).toList(),
       owner: PostOwner.fromJson(owner),
     );
   }
@@ -202,3 +248,15 @@ final postServiceProvider = Provider<PostService>((ref) {
   final client = ref.watch(graphQLClientProvider).value;
   return PostService(client, ref);
 });
+
+final postsOfUserProvider = FutureProvider.family<UserPostCollection, String>(
+  (ref, String userId) {
+    return ref.read(postServiceProvider).postsOfUser(userId);
+  },
+);
+
+final getPostsOfFriendsProvider = FutureProvider<List<PostModel>>(
+  (ref) {
+    return ref.read(postServiceProvider).getPostsOfFriends();
+  },
+);

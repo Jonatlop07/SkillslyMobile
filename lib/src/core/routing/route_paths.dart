@@ -8,5 +8,6 @@ class RoutePaths {
   static const passwordReset = '/${Routes.passwordReset}';
   static const account = '/${Routes.account}';
   static const feed = '/${Routes.feed}';
+  static postsOfUser(ownerId) => '/${Routes.feed}/${Routes.postsOfUser}/$ownerId';
   static const credentials = '/${Routes.account}/${Routes.credentials}';
 }

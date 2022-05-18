@@ -6,7 +6,7 @@ import 'post_content_element.dart';
 class PostModel {
   PostModel({
     required this.id,
-    this.owner,
+    required this.owner,
     required this.description,
     required this.createdAt,
     this.updatedAt,
@@ -15,7 +15,7 @@ class PostModel {
   });
 
   final String id;
-  final PostOwner? owner;
+  final PostOwner owner;
   final String description;
   final String createdAt;
   final String? updatedAt;
