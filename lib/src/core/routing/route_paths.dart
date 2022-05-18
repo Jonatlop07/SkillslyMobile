@@ -10,4 +10,6 @@ class RoutePaths {
   static const feed = '/${Routes.feed}';
   static const searchUser = '/${Routes.searchUser}';
   static const credentials = '/${Routes.account}/${Routes.credentials}';
+  static const conversations = '/${Routes.conversations}';
+  static const chat = '/${Routes.chat}';
 }

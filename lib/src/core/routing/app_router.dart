@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
+import 'package:skillsly_ma/src/features/chat/presentation/conversation/chat.screen.dart';
 import '../../features/post/presenter/post.dart';
 import '../../features/users/presentation/search/search_users_screen.dart';
 import '../../features/chat/presentation/user_conversations/user_conversations.screen.dart';
@@ -27,9 +28,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: false,
     redirect: (state) {
       final isLoggedIn = authService.isLoggedIn();
-      final isLoggingIn = state.subloc == RoutePaths.signIn || state.subloc == RoutePaths.signUp;
+      final isLoggingIn = state.subloc == RoutePaths.signIn ||
+          state.subloc == RoutePaths.signUp;
       if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
-      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home) return RoutePaths.feed;
+      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home)
+        return RoutePaths.feed;
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authService.authStateChanges()),
@@ -73,14 +76,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
-            path: Routes.chat,
-            name: Routes.chat,
+            path: Routes.conversations,
+            name: Routes.conversations,
             pageBuilder: (context, state) => TransitionScreen.createFade(
-              context,
-              state,
-              const UserConversationsScreen()
-            ),
+                context, state, const UserConversationsScreen()),
           ),
+          GoRoute(
+              path: '${Routes.chat}/:userId/:conversationId',
+              name: Routes.chat,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  ChatScreen(
+                    userId: state.params['userId'] ?? '',
+                    conversationId: state.params['conversationId'] ?? '',
+                  ))),
           GoRoute(
               path: Routes.account,
               name: Routes.account,

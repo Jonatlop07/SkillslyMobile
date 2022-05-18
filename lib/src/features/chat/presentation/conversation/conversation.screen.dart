@@ -29,6 +29,12 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => {
+        GoRouter.of(context).goNamed(Routes.chat, params: {
+          "userId": widget.members[0].user_id,
+          "conversationId": widget.conversationID
+        })
+      },
       onLongPress: () => {_showActionSheet(context, widget, ref)},
       child: Container(
         padding:

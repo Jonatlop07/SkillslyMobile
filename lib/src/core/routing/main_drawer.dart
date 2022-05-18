@@ -50,7 +50,7 @@ class MainDrawer extends ConsumerWidget {
               GoRouter.of(context).goNamed(Routes.feed);
             }),
             buildListTile('Chat', Icons.add_comment_rounded, () {
-              GoRouter.of(context).goNamed(Routes.chat);
+              GoRouter.of(context).goNamed(Routes.conversations);
             }),
             buildListTile('Mi Cuenta', Icons.account_circle_rounded, () {
               GoRouter.of(context).goNamed(Routes.account);

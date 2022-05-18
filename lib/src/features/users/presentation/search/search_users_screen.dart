@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
+import 'package:skillsly_ma/src/features/account_settings/domain/user_account_details.dart';
+import 'package:skillsly_ma/src/features/chat/data/chat_service.dart';
 import 'package:skillsly_ma/src/features/users/data/search_service.dart';
 import 'package:skillsly_ma/src/features/users/domain/search_user_details.dart';
 import 'package:skillsly_ma/src/shared/types/pagination_details.dart';
@@ -112,41 +115,7 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
                   controller: controller,
                   itemCount: searchedUsers.length,
                   itemBuilder: (ctx, index) {
-                    return Card(
-                      elevation: 2,
-                      child: ListTile(
-                        leading: const CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg')),
-                        title: Text(searchedUsers[index].name),
-                        subtitle: Text(searchedUsers[index].email),
-                        trailing: Column(
-                          children: [
-                            Expanded(
-                              child: TextButton(
-                                child: Text(
-                                  'Seguir usuario',
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                            Expanded(
-                              child: TextButton(
-                                child: Text(
-                                  'Ver publicaciones',
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                onPressed: () {
-                                  GoRouter.of(context).goNamed(Routes.posts,
-                                      params: {"id": searchedUsers[index].id});
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
+                    return UserCard(searchedUsers[index]);
                   },
                 )
               : Padding(
@@ -175,4 +144,92 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
       });
     }
   }
+}
+
+class UserCard extends ConsumerWidget {
+  UserCard(this.userInfo);
+
+  final SearchUserDetails userInfo;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        _showActionSheet(context, userInfo, ref);
+      },
+      child: Card(
+        elevation: 2,
+        child: ListTile(
+          leading: const CircleAvatar(
+              backgroundImage: NetworkImage(
+                  'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg')),
+          title: Text(userInfo.name),
+          subtitle: Text(userInfo.email),
+          // trailing: Column(
+          //   children: [
+          //     Expanded(
+          //       child: TextButton(
+          //         child: Text(
+          //           'Seguir usuario',
+          //           style: TextStyle(fontSize: 10),
+          //         ),
+          //         onPressed: () {},
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: TextButton(
+          //         child: Text(
+          //           'Ver publicaciones',
+          //           style: TextStyle(fontSize: 10),
+          //         ),
+          //         onPressed: () {
+          //           GoRouter.of(context)
+          //               .goNamed(Routes.posts, params: {"id": userInfo.id});
+          //         },
+          //       ),
+          //     )
+          //   ],
+          // ),
+        ),
+      ),
+    );
+  }
+}
+
+void _showActionSheet(
+    BuildContext context, SearchUserDetails userInfo, WidgetRef ref) {
+  showCupertinoModalPopup<void>(
+    context: context,
+    builder: (BuildContext context) => CupertinoActionSheet(
+      title: const Text('Acciones sobre este usuario'),
+      message: const Text('Test'),
+      actions: <CupertinoActionSheetAction>[
+        CupertinoActionSheetAction(
+          onPressed: () {},
+          child: const Text('Seguir usuario'),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            GoRouter.of(context)
+                .goNamed(Routes.posts, params: {"id": userInfo.id});
+          },
+          child: const Text('Ver publicaciones'),
+        ),
+        CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () {
+            ref.watch(createPrivateConversationFutureProvider(userInfo.id));
+            Navigator.of(context).pop();
+            GoRouter.of(context).goNamed(Routes.conversations);
+          },
+          child: const Text('Crear una conversación'),
+        ),
+        CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          onPressed: () {},
+          child: const Text('Cancelar'),
+        ),
+      ],
+    ),
+  );
 }

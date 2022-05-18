@@ -1,5 +1,7 @@
 class Routes {
   static const home = 'home';
+  static const searchUser = 'searchUser';
+  static const chat = 'chat';
   static const signIn = 'signIn';
   static const signUp = 'signUp';
   static const passwordRecovery = 'passwordRecovery';
@@ -8,6 +10,5 @@ class Routes {
   static const credentials = 'credentials';
   static const feed = 'feed';
   static const posts = 'posts';
-  static const chat = 'chat';
-  static const searchUser = 'searchUser';
+  static const conversations = 'conversations';
 }
