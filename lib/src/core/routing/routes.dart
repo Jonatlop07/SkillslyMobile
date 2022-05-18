@@ -8,7 +8,10 @@ class Routes {
   static const credentials = 'credentials';
   static const feed = 'feed';
   static const posts = 'posts';
+  static const comments = 'comments';
   static const editComment = 'editComment';
+  static const createPost = 'createPost';
+  static const postsOfUser = 'postsOfUser';
   static const chat = 'chat';
   static const searchUser = 'searchUser';
 }

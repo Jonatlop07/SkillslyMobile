@@ -138,8 +138,10 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
                                   style: TextStyle(fontSize: 10),
                                 ),
                                 onPressed: () {
-                                  GoRouter.of(context).goNamed(Routes.posts,
-                                      params: {"id": searchedUsers[index].id});
+                                  GoRouter.of(context)
+                                      .goNamed(Routes.postsOfUser, params: {
+                                    "ownerId": searchedUsers[index].id
+                                  });
                                 },
                               ),
                             )

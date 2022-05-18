@@ -13,5 +13,11 @@ final graphQLClientProvider = Provider<ValueNotifier<GraphQLClient>>((ref) {
     if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
   });
   return ValueNotifier(
-      GraphQLClient(link: httpLink, cache: GraphQLCache(store: HiveStore())));
+    GraphQLClient(
+      link: httpLink,
+      cache: GraphQLCache(
+        store: HiveStore(),
+      ),
+    ),
+  );
 });

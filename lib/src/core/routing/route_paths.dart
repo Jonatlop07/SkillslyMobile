@@ -9,5 +9,8 @@ class RoutePaths {
   static const account = '/${Routes.account}';
   static const feed = '/${Routes.feed}';
   static const searchUser = '/${Routes.searchUser}';
+  static postsOfUser(ownerId) =>
+      '/${Routes.feed}/${Routes.postsOfUser}/$ownerId';
   static const credentials = '/${Routes.account}/${Routes.credentials}';
+  static comments(postId) => '/${Routes.comments}/$postId';
 }

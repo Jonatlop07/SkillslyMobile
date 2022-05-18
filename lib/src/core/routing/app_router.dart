@@ -20,6 +20,8 @@ import 'package:skillsly_ma/src/features/comments/presentation/comments/edit_com
 import '../../features/post/presenter/post.dart';
 import '../../features/users/presentation/search/search_users_screen.dart';
 import 'package:skillsly_ma/src/features/post/presenter/create_post/create_post_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/feed/feed_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/posts_of_user/posts_of_user_screen.dart';
 
 import 'not_found_screen.dart';
 import 'routes.dart';
@@ -70,26 +72,30 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: Routes.feed,
             name: Routes.feed,
             pageBuilder: (context, state) => TransitionScreen.createFade(
-                context,
-                state,
-                Scaffold(
-                  appBar: AppBar(
-                    title: Text('Feed'.hardcoded),
-                    actions: <Widget>[
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.search),
-                      )
-                    ],
-                  ),
-                  body: Container(
-                      child: const CommentsList(
-                    post_id: '8ba10a14-9337-48dc-811a-9d43955e183c',
-                  )),
-                  drawer: const MainDrawer(),
-
-                  // const CreatePostScreen(),
-                )),
+              context,
+              state,
+              const FeedScreen(),
+            ),
+            routes: [
+              GoRoute(
+                path: Routes.createPost,
+                name: Routes.createPost,
+                pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  const CreatePostScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '${Routes.postsOfUser}/:ownerId',
+                name: Routes.postsOfUser,
+                pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  PostsOfUserScreen(ownerId: state.params['ownerId']!),
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: Routes.chat,
@@ -140,10 +146,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               pageBuilder: (context, state) => TransitionScreen.createFade(
                   context, state, SearchUserScreen())),
           GoRoute(
-              path: '${Routes.posts}',
-              name: Routes.posts,
-              pageBuilder: (context, state) => TransitionScreen.createFade(
-                  context, state, Post(userId: ''))),
+            path: '${Routes.comments}/:postId',
+            name: Routes.comments,
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+              context,
+              state,
+              CommentsList(
+                postId: state.params['postId']!,
+              ),
+            ),
+          ),
           GoRoute(
               path: Routes.editComment,
               name: Routes.editComment,
