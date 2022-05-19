@@ -17,8 +17,7 @@ import 'package:video_player/video_player.dart';
 class CommentCard extends ConsumerStatefulWidget {
   CommentDetails comment;
   final VoidCallback? onCommentDeleted;
-  CommentCard({required this.comment, Key? key, this.onCommentDeleted})
-      : super(key: key);
+  CommentCard({required this.comment, Key? key, this.onCommentDeleted}) : super(key: key);
 
   @override
   ConsumerState<CommentCard> createState() => _CommentCardState();
@@ -43,23 +42,20 @@ class _CommentCardState extends ConsumerState<CommentCard> {
       (_, state) => state.showAlertDialogOnError(context),
     );
     var _chewieController;
-    if (widget.comment.media_locator.isNotEmpty &&
-        widget.comment.media_type.startsWith('video')) {
+    if (widget.comment.media_locator.isNotEmpty && widget.comment.media_type.startsWith('video')) {
       _chewieController = ChewieController(
-        videoPlayerController:
-            VideoPlayerController.network(widget.comment.media_locator),
+        videoPlayerController: VideoPlayerController.network(widget.comment.media_locator),
         autoInitialize: true,
       );
     }
     var comment_details = widget.comment;
     const containerHeight = Sizes.p48 * 3;
-    const containerMargin =
-        EdgeInsets.symmetric(vertical: Sizes.p12, horizontal: 0);
+    const containerMargin = EdgeInsets.symmetric(vertical: Sizes.p12, horizontal: 0);
 
     final state = ref.watch(commentCardControllerProvider(null));
     return Card(
         child: Padding(
-            padding: EdgeInsets.all(Sizes.p16),
+            padding: const EdgeInsets.all(Sizes.p16),
             child: Column(
               children: [
                 Align(
@@ -74,8 +70,8 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(widget.comment.owner.email,
-                      style: Theme.of(context).textTheme.caption),
+                  child:
+                      Text(widget.comment.owner.email, style: Theme.of(context).textTheme.caption),
                 ),
                 Row(
                   children: [
@@ -110,18 +106,15 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                         onSelected: (index) async {
                           switch (index) {
                             case 'editar':
-                              GoRouter.of(context).goNamed(Routes.editComment,
-                                  extra: comment_details);
+                              GoRouter.of(context)
+                                  .goNamed(Routes.editComment, extra: comment_details);
                               break;
                             case 'eliminar':
                               showDialog(
                                   context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                        title:
-                                            const Text("¿Eliminar comentario?"),
-                                        content:
-                                            Text(state.removeCommentDialogText),
+                                  builder: (BuildContext context) => AlertDialog(
+                                        title: const Text("¿Eliminar comentario?"),
+                                        content: Text(state.removeCommentDialogText),
                                         actions: <Widget>[
                                           TextButton(
                                               onPressed: () {
