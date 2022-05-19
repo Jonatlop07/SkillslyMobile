@@ -156,8 +156,10 @@ class UserCard extends ConsumerWidget {
         elevation: 2,
         child: ListTile(
           leading: const CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg')),
+            backgroundImage: NetworkImage(
+              'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
+            ),
+          ),
           title: Text(userInfo.name),
           subtitle: Text(userInfo.email),
           // trailing: Column(
@@ -204,7 +206,7 @@ void _showActionSheet(BuildContext context, SearchUserDetails userInfo, WidgetRe
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            GoRouter.of(context).goNamed(Routes.posts, params: {"id": userInfo.id});
+            GoRouter.of(context).goNamed(Routes.postsOfUser, params: {"ownerId": userInfo.id});
           },
           child: const Text('Ver publicaciones'),
         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:skillsly_ma/src/core/common_widgets/empty_placeholder_widget.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_center.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/constants/breakpoints.dart';
@@ -19,8 +18,8 @@ class PostsBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (posts.isEmpty) {
-      return EmptyPlaceholderWidget(
-        message: 'Ningúna publicación ha sido creada hasta el momento'.hardcoded,
+      return ResponsiveCenter(
+        child: Text('Ningúna publicación ha sido creada hasta el momento'.hardcoded),
       );
     }
     final screenWidth = MediaQuery.of(context).size.width;
