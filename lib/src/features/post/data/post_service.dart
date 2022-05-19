@@ -83,10 +83,7 @@ class PostService {
       }
     ''');
     final result = await _client.query(
-      QueryOptions(
-        document: postsByOwnerId,
-        fetchPolicy: FetchPolicy.networkOnly,
-      ),
+      QueryOptions(document: postsByOwnerId),
     );
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
@@ -260,9 +257,11 @@ final postServiceProvider = Provider<PostService>((ref) {
   return PostService(client, ref);
 });
 
-final postsOfUserProvider = FutureProvider.family<UserPostCollection, String>(
-  (ref, String userId) {
-    return ref.read(postServiceProvider).postsOfUser(userId);
+final postsOfUserProvider = FutureProvider.autoDispose.family<UserPostCollection, String>(
+  (ref, String userId) async {
+    final response = await ref.read(postServiceProvider).postsOfUser(userId);
+    ref.keepAlive();
+    return response;
   },
 );
 
