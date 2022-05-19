@@ -9,6 +9,7 @@ import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/constants/palette.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
+import 'package:skillsly_ma/src/features/comments/presentation/comments/comments_list.dart';
 import 'package:skillsly_ma/src/features/post/data/post_service.dart';
 import 'package:skillsly_ma/src/features/post/domain/post_content_element.dart';
 import 'package:skillsly_ma/src/features/post/domain/post_model.dart';
@@ -36,6 +37,7 @@ class _PostState extends ConsumerState<Post> {
   @override
   void initState() {
     super.initState();
+    print(widget.postModel.id);
     Future.microtask(() => _initializeVideoControllers());
   }
 
@@ -64,7 +66,8 @@ class _PostState extends ConsumerState<Post> {
 
   Widget _renderFileBox(int index) {
     const containerHeight = Sizes.p48 * 3;
-    const containerMargin = EdgeInsets.symmetric(vertical: Sizes.p12, horizontal: 0);
+    const containerMargin =
+        EdgeInsets.symmetric(vertical: Sizes.p12, horizontal: 0);
     if (_isImage(widget.postModel.contents[index].mediaType!)) {
       return Container(
           height: containerHeight,
@@ -91,7 +94,9 @@ class _PostState extends ConsumerState<Post> {
             SizedBox(
               height: Sizes.p24,
               child: Text(
-                widget.ownerName != null ? widget.ownerName! : widget.postModel.owner.name,
+                widget.ownerName != null
+                    ? widget.ownerName!
+                    : widget.postModel.owner.name,
                 style: const TextStyle(
                   fontSize: Sizes.p20,
                   fontWeight: FontWeight.bold,
@@ -135,7 +140,8 @@ class _PostState extends ConsumerState<Post> {
                         ),
                       ),
                       gapH8,
-                      if (widget.postModel.contents[i].mediaLocator != null) _renderFileBox(i),
+                      if (widget.postModel.contents[i].mediaLocator != null)
+                        _renderFileBox(i),
                       ResponsiveCenter(
                         child: OutlinedActionButtonWithIcon(
                           text: 'Editar'.hardcoded,
@@ -161,6 +167,22 @@ class _PostState extends ConsumerState<Post> {
                 },
               ),
             ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: SizedBox(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(padding: EdgeInsets.all(5)),
+                  child: Text('Ver comentarios',
+                      style: TextStyle(
+                          fontSize: Sizes.p12,
+                          color: Palette.primary.shade300)),
+                  onPressed: () {
+                    GoRouter.of(context).goNamed(Routes.comments,
+                        params: {'postId': widget.postModel.id});
+                  },
+                ),
+              ),
+            )
           ],
         ),
       ),

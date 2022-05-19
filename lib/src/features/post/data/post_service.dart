@@ -12,7 +12,8 @@ import 'package:skillsly_ma/src/shared/state/app_user.dart';
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
 class PostService {
-  PostService(this._client, Ref ref) : _authStateAccessor = AuthStateAccessor(ref);
+  PostService(this._client, Ref ref)
+      : _authStateAccessor = AuthStateAccessor(ref);
 
   final GraphQLClient _client;
   final AuthStateAccessor _authStateAccessor;
@@ -49,7 +50,8 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
     final Map<String, dynamic> post = result.data?['postById'];
@@ -91,7 +93,8 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
     final List<dynamic> posts = result.data?['postsByOwnerId'];
@@ -135,7 +138,8 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
     final List<dynamic> posts = result.data?['postsByOwnerId']['posts'];
@@ -171,17 +175,21 @@ class PostService {
         variables: {'post_details': newPostDetails.toMap(_user!.id)},
       ),
     );
+
+    print(result.data);
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
     final Map<String, dynamic> createdPost = result.data?['createPost'];
     createdPost['owner'] = {'id': _user!.id, 'name': 'Yo'};
-    return PostModel.fromJson(result.data?['createPost'] as Map<String, dynamic>);
+    return PostModel.fromJson(
+        result.data?['createPost'] as Map<String, dynamic>);
   }
 
   Future<PostModel> updatePost(PostUpdates postUpdates) async {
@@ -211,12 +219,14 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
     final Map<String, dynamic> updatedPost = result.data?['updatePost'];
     updatedPost['owner'] = {'id': _user!.id, 'name': 'Yo'};
-    return PostModel.fromJson(result.data?['updatePost'] as Map<String, dynamic>);
+    return PostModel.fromJson(
+        result.data?['updatePost'] as Map<String, dynamic>);
   }
 
   Future<void> deletePost(String postId) async {
@@ -238,7 +248,8 @@ class PostService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+            .hardcoded,
       );
     }
   }

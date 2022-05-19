@@ -14,7 +14,8 @@ class SearchUserScreen extends ConsumerStatefulWidget {
   const SearchUserScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _SearchUserScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _SearchUserScreenState();
 }
 
 class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
@@ -39,8 +40,8 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
 
   Future<List<SearchUserDetails>> _getUsers() {
     final searchService = ref.read(searchServiceProvider);
-    return searchService.searchUser(
-        userInputController.text, PaginationDetails(limit: limit, offset: offset));
+    return searchService.searchUser(userInputController.text,
+        PaginationDetails(limit: limit, offset: offset));
   }
 
   String get userInput {
@@ -79,8 +80,8 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
           title: Container(
               width: double.infinity,
               height: 40,
-              decoration:
-                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
               child: Center(
                 child: TextField(
                   controller: userInputController,
@@ -193,7 +194,8 @@ class UserCard extends ConsumerWidget {
   }
 }
 
-void _showActionSheet(BuildContext context, SearchUserDetails userInfo, WidgetRef ref) {
+void _showActionSheet(
+    BuildContext context, SearchUserDetails userInfo, WidgetRef ref) {
   showCupertinoModalPopup<void>(
     context: context,
     builder: (BuildContext context) => CupertinoActionSheet(
@@ -206,7 +208,8 @@ void _showActionSheet(BuildContext context, SearchUserDetails userInfo, WidgetRe
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            GoRouter.of(context).goNamed(Routes.postsOfUser, params: {"ownerId": userInfo.id});
+            GoRouter.of(context)
+                .goNamed(Routes.postsOfUser, params: {"ownerId": userInfo.id});
           },
           child: const Text('Ver publicaciones'),
         ),

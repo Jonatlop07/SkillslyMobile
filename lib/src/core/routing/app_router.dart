@@ -11,6 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
+import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
+import 'package:skillsly_ma/src/features/comments/presentation/comments/comments_list.dart';
+import 'package:skillsly_ma/src/features/comments/presentation/comments/edit_comment/edit_comment_screen.dart';
 import 'package:skillsly_ma/src/features/chat/presentation/conversation/chat.screen.dart';
 import 'package:skillsly_ma/src/features/post/presenter/create_post/create_post_screen.dart';
 import 'package:skillsly_ma/src/features/post/presenter/feed/feed_screen.dart';
@@ -28,9 +31,11 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: false,
     redirect: (state) {
       final isLoggedIn = authService.isLoggedIn();
-      final isLoggingIn = state.subloc == RoutePaths.signIn || state.subloc == RoutePaths.signUp;
+      final isLoggingIn = state.subloc == RoutePaths.signIn ||
+          state.subloc == RoutePaths.signUp;
       if (!isLoggedIn) return isLoggingIn ? null : RoutePaths.signIn;
-      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home) return RoutePaths.feed;
+      if (isLoggingIn || isLoggedIn && state.subloc == RoutePaths.home)
+        return RoutePaths.feed;
       return null;
     },
     refreshListenable: GoRouterRefreshStream(authService.authStateChanges()),
@@ -93,8 +98,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: Routes.conversations,
             name: Routes.conversations,
-            pageBuilder: (context, state) =>
-                TransitionScreen.createFade(context, state, const UserConversationsScreen()),
+            pageBuilder: (context, state) => TransitionScreen.createFade(
+                context, state, const UserConversationsScreen()),
           ),
           GoRoute(
             path: '${Routes.chat}/:userId/:conversationId',
@@ -133,14 +138,33 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
-            path: Routes.searchUser,
-            name: Routes.searchUser,
+            path: '${Routes.comments}/:postId',
+            name: Routes.comments,
             pageBuilder: (context, state) => TransitionScreen.createFade(
               context,
               state,
-              const SearchUserScreen(),
+              CommentsList(
+                postId: state.params['postId']!,
+              ),
             ),
           ),
+          GoRoute(
+              path: Routes.editComment,
+              name: Routes.editComment,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  EditCommentScreen(
+                    comment_details: state.extra! as CommentDetails,
+                  ))),
+          GoRoute(
+              path: Routes.searchUser,
+              name: Routes.searchUser,
+              pageBuilder: (context, state) => TransitionScreen.createFade(
+                    context,
+                    state,
+                    const SearchUserScreen(),
+                  )),
         ],
       ),
     ],

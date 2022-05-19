@@ -27,7 +27,8 @@ class _PostsOfUserContents extends ConsumerStatefulWidget {
   final String ownerId;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _PostsOfUserContentsState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _PostsOfUserContentsState();
 }
 
 class _PostsOfUserContentsState extends ConsumerState<_PostsOfUserContents> {
@@ -41,7 +42,8 @@ class _PostsOfUserContentsState extends ConsumerState<_PostsOfUserContents> {
       data: (userPostCollection) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Publicaciones de ${userPostCollection.owner.name}'.hardcoded),
+            title: Text(
+                'Publicaciones de ${userPostCollection.owner.name}'.hardcoded),
           ),
           body: PostsBuilder(
             posts: userPostCollection.posts,

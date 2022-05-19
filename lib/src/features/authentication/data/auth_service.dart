@@ -48,6 +48,7 @@ class AuthService {
         variables: {'email': email, 'password': password},
       ),
     );
+
     print(result.data?['login']);
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());

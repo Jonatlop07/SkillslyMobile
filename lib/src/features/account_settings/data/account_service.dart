@@ -4,6 +4,7 @@ import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/features/account_settings/domain/update_user_account_details.dart';
 import 'package:skillsly_ma/src/features/account_settings/domain/user_account_details.dart';
+import 'package:skillsly_ma/src/features/comments/domain/comment_owner.dart';
 import 'package:skillsly_ma/src/shared/exception/request_exception.dart';
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
@@ -153,6 +154,33 @@ class AccountService {
 
   void _deleteAuthState() {
     _authStateAccessor.getAuthStateController().state = null;
+  }
+
+  Future<CommentOwner> getUserData(user_id) async {
+    final getUserData = gql('''
+      query user(\$id: String!) {
+        user(id: \$id) {
+          email
+          name
+        }
+      }
+    ''');
+    final result = await _client.query(QueryOptions(
+      document: getUserData,
+      variables: {
+        'id': user_id,
+      },
+    ));
+    if (result.hasException || (result.isLoading && result.data != null)) {
+      throw BackendRequestException(
+        result.exception != null
+            ? result.exception.toString()
+            : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
+                .hardcoded,
+      );
+    }
+    print(result.data?['user']);
+    return CommentOwner.fromJson(result.data?['user'] as Map<String, dynamic>);
   }
 }
 

@@ -8,13 +8,14 @@ import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 import '../../../shared/exception/request_exception.dart';
 
 class InnerCommentsService {
-  InnerCommentsService(this._client, Ref ref) : _authStateAccessor = AuthStateAccessor(ref);
+  InnerCommentsService(this._client, Ref ref)
+      : _authStateAccessor = AuthStateAccessor(ref);
   final GraphQLClient _client;
   final AuthStateAccessor _authStateAccessor;
 
   String? get _userId => _authStateAccessor.getAuthStateController().state?.id;
 
-  Future<InnerCommentDetails> getInnerComments(
+  Future<List<InnerCommentDetails>> getInnerComments(
       String comment_id, SearchCommentsPaginationDetails? query_params) async {
     final limit = query_params?.limit ?? 0;
     final page = query_params?.page ?? 0;
@@ -25,13 +26,19 @@ class InnerCommentsService {
           owner_id
           description
           media_locator
+          media_type
           created_at
           comment_id
           updated_at
+          owner {
+            name
+            email
+          }
         }
       }
     ''');
-    final result = await _client.query(QueryOptions(document: query_inner_comments, variables: {
+    final result = await _client
+        .query(QueryOptions(document: query_inner_comments, variables: {
       'inner_comments_pagination': {
         'limit': limit,
         'page': page,
@@ -42,28 +49,40 @@ class InnerCommentsService {
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
-    return InnerCommentDetails.fromJson(result.data?['queryInnerComments'] as Map<String, dynamic>);
+    final queryResult = result.data?['queryInnerComments'];
+    final List<InnerCommentDetails> innerComments = [];
+    queryResult.forEach((comment) =>
+        {innerComments.add(InnerCommentDetails.fromJson(comment))});
+
+    return innerComments;
   }
 
-  Future<InnerCommentDetails> createInnerComment(
-      String comment_id, String comment, String media_locator) async {
+  Future<InnerCommentDetails> createInnerComment(String comment_id,
+      String comment, String media_locator, String media_type) async {
     final create_inner_comment = gql('''
       mutation createInnerComment(\$inner_comment_details: NewInnerComment!, \$comment_id: ID!){
         createInnerComment(inner_comment_details: \$inner_comment_details, comment_id: \$comment_id){
           _id
           description
           media_locator
+          media_type
           created_at
           comment_id
           owner_id
+          owner {
+            name
+            email
+          }
         }
       }
     ''');
-    final result = await _client.mutate(MutationOptions(document: create_inner_comment, variables: {
+    final result = await _client
+        .mutate(MutationOptions(document: create_inner_comment, variables: {
       'inner_comment_details': {
         'owner_id': _userId,
         'description': comment,
-        'media_locator': media_locator
+        'media_locator': media_locator,
+        'media_type': media_type
       },
       'comment_id': comment_id,
     }));
@@ -71,22 +90,29 @@ class InnerCommentsService {
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
-    return InnerCommentDetails.fromJson(result.data?['createInnerComment'] as Map<String, dynamic>);
+    return InnerCommentDetails.fromJson(
+        result.data?['createInnerComment'] as Map<String, dynamic>);
   }
 
-  Future<CommentContentDetails> editInnerComment(
-      String inner_comment_id, String description, String media_locator) async {
+  Future<CommentContentDetails> editInnerComment(String inner_comment_id,
+      String description, String media_locator, String media_type) async {
     final edit_inner_comment = gql('''
       mutation updateInnerComment(\$inner_comment_id: ID!, \$new_content: CommentContentUpdate!){
         updateInnerComment(inner_comment_id: \$inner_comment_id, new_content: \$new_content){
           description
           media_locator
+          media_type
         }
       }
     ''');
-    final result = await _client.mutate(MutationOptions(document: edit_inner_comment, variables: {
+    final result = await _client
+        .mutate(MutationOptions(document: edit_inner_comment, variables: {
       'inner_comment_id': inner_comment_id,
-      'new_content': {'description': description, 'media_locator': media_locator},
+      'new_content': {
+        'description': description,
+        'media_locator': media_locator,
+        'media_type': media_type
+      },
     }));
 
     if (result.hasException) {
@@ -102,7 +128,8 @@ class InnerCommentsService {
         deleteInnerComment(inner_comment_id: \$inner_comment_id)
       }
     ''');
-    final result = await _client.mutate(MutationOptions(document: delete_inner_comment, variables: {
+    final result = await _client
+        .mutate(MutationOptions(document: delete_inner_comment, variables: {
       'inner_comment_id': inner_comment_id,
     }));
 

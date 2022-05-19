@@ -14,7 +14,8 @@ import 'account_credentials_controller.dart';
 import 'account_credentials_state.dart';
 
 class AccountCredentialsScreen extends StatelessWidget {
-  const AccountCredentialsScreen({Key? key, required this.formType}) : super(key: key);
+  const AccountCredentialsScreen({Key? key, required this.formType})
+      : super(key: key);
 
   final AccountCredentialsFormType formType;
 
@@ -44,10 +45,12 @@ class _AccountCredentialsContents extends ConsumerStatefulWidget {
   final AccountCredentialsFormType formType;
 
   @override
-  ConsumerState<_AccountCredentialsContents> createState() => _AccountCredentialsContentsState();
+  ConsumerState<_AccountCredentialsContents> createState() =>
+      _AccountCredentialsContentsState();
 }
 
-class _AccountCredentialsContentsState extends ConsumerState<_AccountCredentialsContents> {
+class _AccountCredentialsContentsState
+    extends ConsumerState<_AccountCredentialsContents> {
   final _formKey = GlobalKey<FormState>();
   final _node = FocusScopeNode();
   final _emailController = TextEditingController();
@@ -104,23 +107,26 @@ class _AccountCredentialsContentsState extends ConsumerState<_AccountCredentials
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(
-      accountCredentialsControllerProvider(widget.formType).select((state) => state.value),
+      accountCredentialsControllerProvider(widget.formType)
+          .select((state) => state.value),
       (_, state) => state.showAlertDialogOnError(context),
     );
-    final state = ref.watch(accountCredentialsControllerProvider(widget.formType));
-    final actionButton = state.formType == AccountCredentialsFormType.deleteAccount
-        ? OutlinedActionButtonWithIcon(
-            text: state.primaryButtonText,
-            color: Palette.tertiary,
-            iconData: Icons.delete_forever_outlined,
-            onPressed: state.isLoading ? null : () => _submit(state),
-          )
-        : OutlinedActionButtonWithIcon(
-            text: state.primaryButtonText,
-            color: Palette.secondary,
-            iconData: Icons.update_outlined,
-            onPressed: state.isLoading ? null : () => _submit(state),
-          );
+    final state =
+        ref.watch(accountCredentialsControllerProvider(widget.formType));
+    final actionButton =
+        state.formType == AccountCredentialsFormType.deleteAccount
+            ? OutlinedActionButtonWithIcon(
+                text: state.primaryButtonText,
+                color: Palette.tertiary,
+                iconData: Icons.delete_forever_outlined,
+                onPressed: state.isLoading ? null : () => _submit(state),
+              )
+            : OutlinedActionButtonWithIcon(
+                text: state.primaryButtonText,
+                color: Palette.secondary,
+                iconData: Icons.update_outlined,
+                onPressed: state.isLoading ? null : () => _submit(state),
+              );
     return ResponsiveScrollableCard(
       child: FocusScope(
         node: _node,
@@ -139,19 +145,24 @@ class _AccountCredentialsContentsState extends ConsumerState<_AccountCredentials
                   hintText: 'ejemplo_correo1@ejemplo.com'.hardcoded,
                   enabled: !state.isLoading,
                   hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.7),
                     fontSize: Sizes.p12,
                   ),
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) => !_submitted ? null : state.emailErrorText(email ?? ''),
+                validator: (email) =>
+                    !_submitted ? null : state.emailErrorText(email ?? ''),
                 autocorrect: false,
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
                 keyboardAppearance: Brightness.light,
                 onEditingComplete: () => _emailEditingComplete(state),
                 inputFormatters: <TextInputFormatter>[
-                  ValidatorInputFormatter(editingValidator: EmailEditingRegexValidator()),
+                  ValidatorInputFormatter(
+                      editingValidator: EmailEditingRegexValidator()),
                 ],
               ),
               gapH24,
@@ -164,8 +175,9 @@ class _AccountCredentialsContentsState extends ConsumerState<_AccountCredentials
                   enabled: !state.isLoading,
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (password) =>
-                    !_submitted ? null : state.passwordErrorText(password ?? ''),
+                validator: (password) => !_submitted
+                    ? null
+                    : state.passwordErrorText(password ?? ''),
                 obscureText: true,
                 autocorrect: false,
                 textInputAction: TextInputAction.done,
@@ -177,8 +189,9 @@ class _AccountCredentialsContentsState extends ConsumerState<_AccountCredentials
               gapH24,
               CustomTextButton(
                 text: state.secondaryButtonText,
-                onPressed:
-                    state.isLoading ? null : () => _updateFormType(state.alternativeActionFormType),
+                onPressed: state.isLoading
+                    ? null
+                    : () => _updateFormType(state.alternativeActionFormType),
               ),
             ],
           ),
