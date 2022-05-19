@@ -26,9 +26,14 @@ class CommentsService {
           owner_id
           description
           media_locator
+          media_type
           created_at
           inner_comment_count
           updated_at
+          owner {
+            name
+            email
+          }
         }
       }
     ''');
@@ -46,6 +51,7 @@ class CommentsService {
     }
 
     final queryResult = result.data?['queryComments'];
+    print(queryResult);
 
     final List<CommentDetails> comments = [];
     queryResult
@@ -54,8 +60,8 @@ class CommentsService {
     return comments;
   }
 
-  Future<CommentDetails> createComment(
-      String post_id, String comment, String media_locator) async {
+  Future<CommentDetails> createComment(String post_id, String comment,
+      String media_locator, String media_type) async {
     final create_comment = gql('''
       mutation createComment(\$comment_details: NewComment!, \$post_id: ID!){
         createComment(comment_details: \$comment_details, post_id: \$post_id){
@@ -63,7 +69,12 @@ class CommentsService {
           owner_id
           description
           media_locator
+          media_type
           created_at
+          owner {
+            name
+            email
+          }
         }
       }
     ''');
@@ -72,27 +83,30 @@ class CommentsService {
       'comment_details': {
         'owner_id': _userId,
         'description': comment,
-        'media_locator': media_locator
+        'media_locator': media_locator,
+        'media_type': media_type
       },
       'post_id': post_id,
     }));
 
-    print(result);
-
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
+
+    print(result.data?['createComment']);
+
     return CommentDetails.fromJson(
         result.data?['createComment'] as Map<String, dynamic>);
   }
 
-  Future<CommentContentDetails> editComment(
-      String comment_id, String description, String media_locator) async {
+  Future<CommentContentDetails> editComment(String comment_id,
+      String description, String media_locator, String media_type) async {
     final edit_comment = gql('''
       mutation updateComment(\$comment_id: ID!, \$new_content: CommentContentUpdate!){
         updateComment(comment_id: \$comment_id, new_content: \$new_content){
           description
           media_locator
+          media_type
         }
       }
     ''');
@@ -101,7 +115,8 @@ class CommentsService {
       'comment_id': comment_id,
       'new_content': {
         'description': description,
-        'media_locator': media_locator
+        'media_locator': media_locator,
+        'media_type': media_type
       },
     }));
 

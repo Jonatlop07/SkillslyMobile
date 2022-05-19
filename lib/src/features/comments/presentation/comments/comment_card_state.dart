@@ -26,7 +26,7 @@ class CommentCardState {
 
 extension CommentCardStateX on CommentCardState {
   String get removeCommentDialogText {
-    return "Si eliminas el comentario, todas las respuesta a este también se eliminarán."
+    return "Si eliminas el comentario todas las respuestas a este también se eliminarán."
         .hardcoded;
   }
 }

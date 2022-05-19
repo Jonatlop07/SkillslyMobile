@@ -5,13 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/constants/palette.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_content_details.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
-import 'package:skillsly_ma/src/features/comments/domain/comment_media.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/edit_comment/edit_comment_controller.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/edit_comment/edit_comment_state.dart';
 import 'package:skillsly_ma/src/shared/utils/async_value_ui.dart';
@@ -42,13 +40,14 @@ class _EditCommentScreenState extends ConsumerState<EditCommentScreen> {
   var initial_media_url = '';
   var initial_media_type = '';
   var _cantSubmit = false;
+  var new_image_loaded = false;
 
   @override
   void didChangeDependencies() {
     _commentController.text = widget.comment_details.description;
     if (widget.comment_details.media_locator.isNotEmpty) {
-      initial_media_url = iMedia.media_file;
-      initial_media_type = iMedia.media_type;
+      initial_media_url = widget.comment_details.media_locator;
+      initial_media_type = widget.comment_details.media_type;
     }
     super.didChangeDependencies();
   }
@@ -67,6 +66,7 @@ class _EditCommentScreenState extends ConsumerState<EditCommentScreen> {
       setState(() {
         media = file;
         mediaController = chewieController;
+        initial_media_url = '';
       });
     }
   }
@@ -78,11 +78,23 @@ class _EditCommentScreenState extends ConsumerState<EditCommentScreen> {
         _cantSubmit = false;
       });
       final controller = ref.read(editCommentControllerProvider(null).notifier);
-      final success = await controller.editComment(widget.comment_details.id,
-          CommentContentInputDetails(description: commentText, media: media));
-      if (success) {
-        widget.onCommentEdited?.call();
-        GoRouter.of(context).goNamed(Routes.feed);
+      if (new_image_loaded) {
+        final success = await controller.editComment(widget.comment_details.id,
+            CommentContentInputDetails(description: commentText, media: media));
+        if (success) {
+          widget.onCommentEdited?.call();
+          GoRouter.of(context).goNamed(Routes.feed);
+        }
+      } else {
+        final success = await controller.editCommentWithoutMediaLoaded(
+            widget.comment_details.id,
+            commentText,
+            initial_media_url,
+            initial_media_type);
+        if (success) {
+          widget.onCommentEdited?.call();
+          GoRouter.of(context).goNamed(Routes.feed);
+        }
       }
     } else {
       setState(() {
@@ -256,20 +268,5 @@ class _EditCommentScreenState extends ConsumerState<EditCommentScreen> {
       );
     }
     return Container();
-  }
-
-  CommentMedia get iMedia {
-    String media_file = '';
-    String media_type = '';
-    if (widget.comment_details.media_locator.split(" ").length < 2) {
-      media_file = widget.comment_details.media_locator.split(" ")[0];
-      media_type = widget.comment_details.media_locator.split(" ")[1];
-    } else {
-      media_file = widget.comment_details.media_locator.split(" ")[0] +
-          " " +
-          widget.comment_details.media_locator.split(" ")[1];
-      media_type = widget.comment_details.media_locator.split(" ")[2];
-    }
-    return CommentMedia(media_file: media_file, media_type: media_type);
   }
 }

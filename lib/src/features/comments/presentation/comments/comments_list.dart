@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_center.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
-import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/features/comments/data/comments_service.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
 import 'package:skillsly_ma/src/features/comments/domain/search_comments_pagination.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/comment_card.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/create_comment/create_comment.dart';
-import 'package:skillsly_ma/src/shared/state/auth_state_provider.dart';
 
 class CommentsList extends ConsumerStatefulWidget {
   final String postId;
@@ -20,8 +17,8 @@ class CommentsList extends ConsumerStatefulWidget {
 }
 
 class _CommentsListState extends ConsumerState<CommentsList> {
-  int page = 0;
-  final int limit = 4;
+  int page = 56;
+  final int limit = 1;
   List<CommentDetails> comments = [];
 
   Future<List<CommentDetails>> fetchComments() async {
@@ -33,6 +30,7 @@ class _CommentsListState extends ConsumerState<CommentsList> {
   void loadComments() async {
     print(widget.postId);
     var fetchedComments = await fetchComments();
+    print(fetchedComments);
     setState(() {
       comments = fetchedComments;
       page += 1;
@@ -63,22 +61,35 @@ class _CommentsListState extends ConsumerState<CommentsList> {
       body: Container(
           child: Column(
         children: [
-          Expanded(
-            child: SizedBox(
-              child: ListView.builder(
-                  itemBuilder: (context, index) => ResponsiveCenter(
-                        child: CommentCard(
-                          comment: comments[index],
-                          onCommentDeleted: () {
-                            print('Comment deleted');
-                          },
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: Sizes.p16, vertical: Sizes.p8),
+          comments.length > 0
+              ? Expanded(
+                  child: SizedBox(
+                    child: ListView.builder(
+                        itemBuilder: (context, index) => ResponsiveCenter(
+                              child: CommentCard(
+                                comment: comments[index],
+                                onCommentDeleted: () {
+                                  print('Comment deleted');
+                                },
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: Sizes.p16, vertical: Sizes.p8),
+                            ),
+                        itemCount: comments.length),
+                  ),
+                )
+              : Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(Sizes.p16),
+                    child: Center(
+                      child: Text(
+                        "No hay comentarios, intenta crear uno",
+                        style: Theme.of(context).textTheme.headline4,
+                        textAlign: TextAlign.center,
                       ),
-                  itemCount: comments.length),
-            ),
-          ),
+                    ),
+                  ),
+                ),
           CreateCommentWidget(
             onCommentCreated: () {
               print('Comment created');

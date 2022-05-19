@@ -26,9 +26,14 @@ class InnerCommentsService {
           owner_id
           description
           media_locator
+          media_type
           created_at
           comment_id
           updated_at
+          owner {
+            name
+            email
+          }
         }
       }
     ''');
@@ -52,17 +57,22 @@ class InnerCommentsService {
     return innerComments;
   }
 
-  Future<InnerCommentDetails> createInnerComment(
-      String comment_id, String comment, String media_locator) async {
+  Future<InnerCommentDetails> createInnerComment(String comment_id,
+      String comment, String media_locator, String media_type) async {
     final create_inner_comment = gql('''
       mutation createInnerComment(\$inner_comment_details: NewInnerComment!, \$comment_id: ID!){
         createInnerComment(inner_comment_details: \$inner_comment_details, comment_id: \$comment_id){
           _id
           description
           media_locator
+          media_type
           created_at
           comment_id
           owner_id
+          owner {
+            name
+            email
+          }
         }
       }
     ''');
@@ -71,7 +81,8 @@ class InnerCommentsService {
       'inner_comment_details': {
         'owner_id': _userId,
         'description': comment,
-        'media_locator': media_locator
+        'media_locator': media_locator,
+        'media_type': media_type
       },
       'comment_id': comment_id,
     }));
@@ -83,13 +94,14 @@ class InnerCommentsService {
         result.data?['createInnerComment'] as Map<String, dynamic>);
   }
 
-  Future<CommentContentDetails> editInnerComment(
-      String inner_comment_id, String description, String media_locator) async {
+  Future<CommentContentDetails> editInnerComment(String inner_comment_id,
+      String description, String media_locator, String media_type) async {
     final edit_inner_comment = gql('''
       mutation updateInnerComment(\$inner_comment_id: ID!, \$new_content: CommentContentUpdate!){
         updateInnerComment(inner_comment_id: \$inner_comment_id, new_content: \$new_content){
           description
           media_locator
+          media_type
         }
       }
     ''');
@@ -98,7 +110,8 @@ class InnerCommentsService {
       'inner_comment_id': inner_comment_id,
       'new_content': {
         'description': description,
-        'media_locator': media_locator
+        'media_locator': media_locator,
+        'media_type': media_type
       },
     }));
 

@@ -26,29 +26,44 @@ class EditCommentController extends StateNotifier<EditCommentState> {
     return !value.hasError;
   }
 
+  Future<bool> editCommentWithoutMediaLoaded(String comment_id,
+      String description, String media_locator, String media_file) async {
+    state = state.copyWith(value: const AsyncValue.loading());
+    final value = await AsyncValue.guard(() => _updateComment(
+        comment_id,
+        description,
+        ExternalFileDescriptor(
+            mediaLocator: media_locator, mediaType: media_file)));
+    state = state.copyWith(value: value);
+    return !value.hasError;
+  }
+
   Future<CommentContentDetails> _submitComment(
       String comment_id, CommentContentInputDetails new_content) async {
-    final String uploaded_media = new_content.media != null
-        ? await _uploadCommentMedia(new_content.media)
-        : '';
+    final ExternalFileDescriptor uploaded_media =
+        new_content.media.path.isNotEmpty
+            ? await _uploadCommentMedia(new_content.media)
+            : ExternalFileDescriptor(mediaLocator: '', mediaType: '');
     return await _updateComment(
         comment_id, new_content.description, uploaded_media);
   }
 
-  Future<String> _uploadCommentMedia(File media) async {
+  Future<ExternalFileDescriptor> _uploadCommentMedia(File media) async {
     String filePath = media.path;
     if (!isImage(filePath) && !isVideo(filePath)) {
       throw Exception('Not a valid file'.hardcoded);
     }
     final ExternalFileDescriptor fileDescriptor =
         await mediaService.uploadFile(media);
-    return '${fileDescriptor.mediaLocator} ${fileDescriptor.mediaType}';
+    return ExternalFileDescriptor(
+        mediaLocator: fileDescriptor.mediaLocator,
+        mediaType: fileDescriptor.mediaType);
   }
 
-  Future<CommentContentDetails> _updateComment(
-      String comment_id, String description, String media_locator) async {
+  Future<CommentContentDetails> _updateComment(String comment_id,
+      String description, ExternalFileDescriptor media) async {
     return await commentsService.editComment(
-        comment_id, description, media_locator);
+        comment_id, description, media.mediaLocator, media.mediaType);
   }
 }
 

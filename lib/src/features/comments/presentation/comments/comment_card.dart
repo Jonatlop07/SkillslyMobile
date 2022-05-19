@@ -7,10 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
-import 'package:skillsly_ma/src/features/account_settings/data/account_service.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
-import 'package:skillsly_ma/src/features/comments/domain/comment_media.dart';
-import 'package:skillsly_ma/src/features/comments/domain/comment_owner.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/comment_card_controller.dart';
 import 'package:skillsly_ma/src/features/comments/presentation/comments/comment_card_state.dart';
 import 'package:skillsly_ma/src/shared/utils/async_value_ui.dart';
@@ -35,20 +32,8 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     final success = await controller.delete(widget.comment.id);
     if (success) {
       widget.onCommentDeleted?.call();
+      GoRouter.of(context).goNamed(Routes.feed);
     }
-  }
-
-  Future<CommentOwner> _getOwner() async {
-    final controller = ref.read(accountServiceProvider);
-    return await controller.getUserData(widget.comment.id);
-  }
-
-  void setOwner() async {
-    var ownerData = await _getOwner();
-    print('owner allo? $ownerData');
-    setState(() {
-      owner_name = ownerData.name;
-    });
   }
 
   @override
@@ -59,9 +44,10 @@ class _CommentCardState extends ConsumerState<CommentCard> {
     );
     var _chewieController;
     if (widget.comment.media_locator.isNotEmpty &&
-        media.media_type.startsWith('video')) {
+        widget.comment.media_type.startsWith('video')) {
       _chewieController = ChewieController(
-        videoPlayerController: VideoPlayerController.network(media.media_file),
+        videoPlayerController:
+            VideoPlayerController.network(widget.comment.media_locator),
         autoInitialize: true,
       );
     }
@@ -76,19 +62,28 @@ class _CommentCardState extends ConsumerState<CommentCard> {
             padding: EdgeInsets.all(Sizes.p16),
             child: Column(
               children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    widget.comment.owner.name,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall!
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(widget.comment.owner.email,
+                      style: Theme.of(context).textTheme.caption),
+                ),
                 Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        widget.comment.owner_id,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                    ),
                     if (comment_details.description.isNotEmpty)
                       Expanded(
                         child: Text(
                           comment_details.description,
-                          style: Theme.of(context).textTheme.caption,
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                     PopupMenuButton(
@@ -136,7 +131,6 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                                           TextButton(
                                               onPressed: () {
                                                 _delete();
-                                                Navigator.pop(context);
                                               },
                                               child: const Text('Eliminar'))
                                         ],
@@ -147,17 +141,16 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                   ],
                 ),
                 if (widget.comment.media_locator.isNotEmpty &&
-                    media.media_type.startsWith('image'))
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    comment_details.media_type.startsWith('image'))
+                  Container(
                     child: FadeInImage.memoryNetwork(
                       placeholder: kTransparentImage,
-                      image: media.media_file,
+                      image: comment_details.media_locator,
                       height: Sizes.p48 * 2,
                     ),
                   ),
                 if (widget.comment.media_locator.isNotEmpty &&
-                    media.media_type.startsWith('video'))
+                    comment_details.media_type.startsWith('video'))
                   Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: Container(
@@ -169,20 +162,5 @@ class _CommentCardState extends ConsumerState<CommentCard> {
                       ))
               ],
             )));
-  }
-
-  CommentMedia get media {
-    String media_file = '';
-    String media_type = '';
-    if (widget.comment.media_locator.split(" ").length < 2) {
-      media_file = widget.comment.media_locator.split(" ")[0];
-      media_type = widget.comment.media_locator.split(" ")[1];
-    } else {
-      media_file = widget.comment.media_locator.split(" ")[0] +
-          " " +
-          widget.comment.media_locator.split(" ")[1];
-      media_type = widget.comment.media_locator.split(" ")[2];
-    }
-    return CommentMedia(media_file: media_file, media_type: media_type);
   }
 }

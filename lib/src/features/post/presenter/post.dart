@@ -37,6 +37,7 @@ class _PostState extends ConsumerState<Post> {
   @override
   void initState() {
     super.initState();
+    print(widget.postModel.id);
     Future.microtask(() => _initializeVideoControllers());
   }
 

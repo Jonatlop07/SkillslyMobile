@@ -19,7 +19,7 @@ class CreateCommentController extends StateNotifier<CreateCommentState> {
   final MediaService mediaService;
   final CommentsService commentService;
 
-  Future<bool> submit(String post_id, String comment, File? media) async {
+  Future<bool> submit(String post_id, String comment, File media) async {
     state = state.copyWith(value: const AsyncValue.loading());
     final value =
         await AsyncValue.guard(() => _submitComment(post_id, comment, media));
@@ -28,25 +28,30 @@ class CreateCommentController extends StateNotifier<CreateCommentState> {
   }
 
   Future<CommentDetails> _submitComment(
-      String post_id, String comment, File? media) async {
-    final String uploaded_media =
-        media != null ? await _uploadCommentMedia(media) : '';
+      String post_id, String comment, File media) async {
+    final ExternalFileDescriptor uploaded_media = media.path.isNotEmpty
+        ? await _uploadCommentMedia(media)
+        : ExternalFileDescriptor(mediaLocator: '', mediaType: '');
     return await _createComment(post_id, comment, uploaded_media);
   }
 
-  Future<String> _uploadCommentMedia(File media) async {
+  Future<ExternalFileDescriptor> _uploadCommentMedia(File media) async {
     String filePath = media.path;
     if (!isImage(filePath) && !isVideo(filePath)) {
       throw Exception('Not a valid file'.hardcoded);
     }
     final ExternalFileDescriptor fileDescriptor =
         await mediaService.uploadFile(media);
-    return '${fileDescriptor.mediaLocator} ${fileDescriptor.mediaType}';
+    return ExternalFileDescriptor(
+        mediaLocator: fileDescriptor.mediaLocator,
+        mediaType: fileDescriptor.mediaType);
   }
 
-  Future<CommentDetails> _createComment(
-      String post_id, String comment, String uploaded_media) async {
-    return await commentService.createComment(post_id, comment, uploaded_media);
+  Future<CommentDetails> _createComment(String post_id, String comment,
+      ExternalFileDescriptor uploaded_media) async {
+    print(uploaded_media);
+    return await commentService.createComment(post_id, comment,
+        uploaded_media.mediaLocator, uploaded_media.mediaType);
   }
 }
 
