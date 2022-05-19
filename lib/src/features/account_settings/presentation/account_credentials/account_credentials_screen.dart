@@ -1,4 +1,3 @@
-import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/custom_text_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/outlined_action_button_with_icon.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_scrollable_card.dart';
@@ -8,11 +7,9 @@ import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/shared/utils/async_value_ui.dart';
 import 'package:skillsly_ma/src/shared/utils/string_validator.dart';
 
-import '../../../../core/common_widgets/outlined_action_button_with_icon.dart';
 import 'account_credentials_controller.dart';
 import 'account_credentials_state.dart';
 
@@ -29,14 +26,7 @@ class AccountCredentialsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text('Administración de la cuenta'.hardcoded),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () => GoRouter.of(context).goNamed(Routes.searchUser),
-              icon: Icon(Icons.search),
-            ),
-          ]),
+      appBar: AppBar(title: Text('Administración de la cuenta'.hardcoded)),
       body: _AccountCredentialsContents(
         formType: formType,
       ),

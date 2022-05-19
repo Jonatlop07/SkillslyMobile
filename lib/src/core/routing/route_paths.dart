@@ -13,4 +13,6 @@ class RoutePaths {
       '/${Routes.feed}/${Routes.postsOfUser}/$ownerId';
   static const credentials = '/${Routes.account}/${Routes.credentials}';
   static comments(postId) => '/${Routes.comments}/$postId';
+  static const conversations = '/${Routes.conversations}';
+  static const chat = '/${Routes.chat}';
 }
