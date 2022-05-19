@@ -18,7 +18,7 @@ class CommentsList extends ConsumerStatefulWidget {
 
 class _CommentsListState extends ConsumerState<CommentsList> {
   int page = 0;
-  final int limit = 0;
+  final int limit = 20;
   List<CommentDetails> comments = [];
 
   Future<List<CommentDetails>> fetchComments() async {
