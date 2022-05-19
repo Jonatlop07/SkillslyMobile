@@ -248,9 +248,7 @@ final postServiceProvider = Provider<PostService>((ref) {
 
 final postsOfUserProvider = FutureProvider.autoDispose.family<UserPostCollection, String>(
   (ref, String userId) async {
-    final response = await ref.read(postServiceProvider).postsOfUser(userId);
-    ref.keepAlive();
-    return response;
+    return await ref.read(postServiceProvider).postsOfUser(userId);
   },
 );
 
