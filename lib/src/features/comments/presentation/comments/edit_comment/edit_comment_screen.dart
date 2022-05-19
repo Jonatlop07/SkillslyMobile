@@ -66,6 +66,7 @@ class _EditCommentScreenState extends ConsumerState<EditCommentScreen> {
       setState(() {
         media = file;
         mediaController = chewieController;
+        new_image_loaded = true;
         initial_media_url = '';
       });
     }

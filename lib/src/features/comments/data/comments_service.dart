@@ -3,7 +3,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_content_details.dart';
 import 'package:skillsly_ma/src/features/comments/domain/comment_details.dart';
-import 'package:skillsly_ma/src/features/comments/domain/search_comments_pagination.dart';
+import 'package:skillsly_ma/src/features/comments/domain/comment_search_params.dart';
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 import '../../../shared/exception/request_exception.dart';
 
@@ -16,9 +16,9 @@ class CommentsService {
   String? get _userId => _authStateAccessor.getAuthStateController().state?.id;
 
   Future<List<CommentDetails>> getComments(
-      String post_id, SearchCommentsPaginationDetails? query_params) async {
-    final limit = query_params?.limit ?? 0;
-    final page = query_params?.page ?? 0;
+      CommentSearchParams search_params) async {
+    final limit = search_params.pagination.limit;
+    final page = search_params.pagination.page;
     final query_comments = gql('''
       query queryComments(\$post_id: ID!, \$comments_pagination: PaginationParams!){
         queryComments(post_id: \$post_id, comments_pagination: \$comments_pagination){
@@ -39,7 +39,7 @@ class CommentsService {
     ''');
     final result =
         await _client.query(QueryOptions(document: query_comments, variables: {
-      'post_id': post_id,
+      'post_id': search_params.postId,
       'comments_pagination': {
         'page': page,
         'limit': limit,
@@ -51,8 +51,6 @@ class CommentsService {
     }
 
     final queryResult = result.data?['queryComments'];
-    print(queryResult);
-
     final List<CommentDetails> comments = [];
     queryResult
         .forEach((comment) => {comments.add(CommentDetails.fromJson(comment))});
@@ -149,3 +147,10 @@ final commentServiceProvider = Provider<CommentsService>((ref) {
   final client = ref.watch(graphQLClientProvider).value;
   return CommentsService(client, ref);
 });
+
+final postCommentsProvider = FutureProvider.autoDispose
+    .family<List<CommentDetails>, CommentSearchParams>(
+  (ref, CommentSearchParams searchParams) async {
+    return await ref.read(commentServiceProvider).getComments(searchParams);
+  },
+);
