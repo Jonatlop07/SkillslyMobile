@@ -33,7 +33,12 @@ class AccountDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Mi cuenta'.hardcoded)),
+      appBar: AppBar(title: Text('Mi cuenta'.hardcoded), actions: <Widget>[
+        IconButton(
+          onPressed: () => GoRouter.of(context).goNamed(Routes.searchUser),
+          icon: const Icon(Icons.search),
+        )
+      ]),
       drawer: const MainDrawer(),
       body: AccountDetailsContents(formType: formType),
     );
