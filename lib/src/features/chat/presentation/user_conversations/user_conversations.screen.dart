@@ -29,22 +29,17 @@ class UserConversationsScreen extends ConsumerWidget {
                   children: <Widget>[
                     Text(
                       "Mis conversaciones".hardcoded,
-                      style: const TextStyle(
-                          fontSize: 27, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
                     ),
                     Container(
-                      padding: const EdgeInsets.only(
-                          left: 8, right: 8, top: 2, bottom: 2),
+                      padding: const EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
                       height: 30,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.05),
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.05),
                       ),
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           GoRouter.of(context).goNamed(Routes.searchUser);
                         },
                         child: Row(
@@ -59,8 +54,10 @@ class UserConversationsScreen extends ConsumerWidget {
                             ),
                             Text(
                               "Crear".hardcoded,
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -72,44 +69,43 @@ class UserConversationsScreen extends ConsumerWidget {
             ),
             const Padding(
               padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-            //   child: TextField(
-            //     enabled: false,
-            //     decoration: InputDecoration(
-            //       hintText: "Busca un usuario".hardcoded,
-            //       hintStyle: TextStyle(color: Colors.grey.shade600),
-            //       prefixIcon: Icon(
-            //         Icons.search,
-            //         color: Colors.grey.shade600,
-            //         size: 20,
-            //       ),
-            //       filled: true,
-            //       fillColor: Colors.grey.shade100,
-            //       contentPadding: const EdgeInsets.all(8),
-            //       enabledBorder: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(20),
-            //           borderSide: BorderSide(color: Colors.grey.shade100)),
-            //     ),
-            //   ),
+              //   child: TextField(
+              //     enabled: false,
+              //     decoration: InputDecoration(
+              //       hintText: "Busca un usuario".hardcoded,
+              //       hintStyle: TextStyle(color: Colors.grey.shade600),
+              //       prefixIcon: Icon(
+              //         Icons.search,
+              //         color: Colors.grey.shade600,
+              //         size: 20,
+              //       ),
+              //       filled: true,
+              //       fillColor: Colors.grey.shade100,
+              //       contentPadding: const EdgeInsets.all(8),
+              //       enabledBorder: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(20),
+              //           borderSide: BorderSide(color: Colors.grey.shade100)),
+              //     ),
+              //   ),
             ),
             AsyncValueWidget<List<Conversation>>(
               value: conversationsList,
               data: (conversation) => conversation.isEmpty
                   ? Center(
                       child: Padding(
-                        padding: EdgeInsets.only(top: 30),
+                        padding: const EdgeInsets.only(top: 30),
                         child: Text(
                           'No se encontraron conversaciones'.hardcoded,
                           style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.bold),
+                              color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                         ),
                       ),
                     )
                   : ListView.builder(
                       itemCount: conversation.length,
                       shrinkWrap: true,
-                      padding: EdgeInsets.only(top: 16),
-                      physics: NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(top: 16),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return ConversationWidget(
                           conversationID: conversation[index].id,

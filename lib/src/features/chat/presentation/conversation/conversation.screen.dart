@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/chat/data/chat_service.dart';
 import 'package:skillsly_ma/src/features/chat/domain/member.dart';
-import 'package:skillsly_ma/src/features/chat/presentation/user_conversations/user_conversations.screen.dart';
 
 class ConversationWidget extends ConsumerStatefulWidget {
   String conversationID;
@@ -13,11 +12,13 @@ class ConversationWidget extends ConsumerStatefulWidget {
   bool isPrivate;
   List<Member> members;
 
-  ConversationWidget(
-      {required this.conversationID,
-      required this.createdAt,
-      required this.isPrivate,
-      required this.members});
+  ConversationWidget({
+    Key? key,
+    required this.conversationID,
+    required this.createdAt,
+    required this.isPrivate,
+    required this.members,
+  }) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() {
@@ -30,23 +31,20 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-        GoRouter.of(context).goNamed(Routes.chat, params: {
-          "userId": widget.members[0].user_id,
-          "conversationId": widget.conversationID
-        })
+        GoRouter.of(context).goNamed(Routes.chat,
+            params: {"userId": widget.members[0].user_id, "conversationId": widget.conversationID})
       },
       onLongPress: () => {_showActionSheet(context, widget, ref)},
       child: Container(
-        padding:
-            const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
         child: Row(
           children: <Widget>[
             Expanded(
               child: Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"),
+                  const CircleAvatar(
+                    backgroundImage:
+                        NetworkImage("https://cdn-icons-png.flaticon.com/512/3135/3135715.png"),
                     maxRadius: 30,
                   ),
                   const SizedBox(
@@ -83,13 +81,11 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
               ),
             ),
             Text(
-              widget.createdAt.split("-")[0] +
-                  "-" +
-                  widget.createdAt.split("-")[1],
+              widget.createdAt.split("-")[0] + "-" + widget.createdAt.split("-")[1],
               style: TextStyle(
-                  fontSize: 12,
-                  fontWeight:
-                      widget.isPrivate ? FontWeight.bold : FontWeight.normal),
+                fontSize: 12,
+                fontWeight: widget.isPrivate ? FontWeight.bold : FontWeight.normal,
+              ),
             ),
           ],
         ),
@@ -98,8 +94,7 @@ class _ConversationState extends ConsumerState<ConversationWidget> {
   }
 }
 
-void _showActionSheet(
-    BuildContext context, ConversationWidget widget, WidgetRef ref) {
+void _showActionSheet(BuildContext context, ConversationWidget widget, WidgetRef ref) {
   showCupertinoModalPopup<void>(
     context: context,
     builder: (BuildContext context) => CupertinoActionSheet(
@@ -122,25 +117,23 @@ void _showActionSheet(
   );
 }
 
-void _showConfirmationDialog(
-    BuildContext context, ConversationWidget widget, WidgetRef ref) {
+void _showConfirmationDialog(BuildContext context, ConversationWidget widget, WidgetRef ref) {
   showCupertinoDialog<ConsumerStatefulWidget>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-            title: Text("Borrar conversación"),
-            content: Text("Esta seguro de eliminar esta conversación?"),
+            title: const Text("Borrar conversación"),
+            content: const Text("Esta seguro de eliminar esta conversación?"),
             actions: [
               CupertinoDialogAction(
                   isDestructiveAction: true,
-                  child: Text("Sí"),
+                  child: const Text("Sí"),
                   onPressed: () {
-                    ref.watch(deleteConversationFutureProvider(
-                        widget.conversationID));
+                    ref.watch(deleteConversationFutureProvider(widget.conversationID));
                     Navigator.of(context).pop();
                     GoRouter.of(context).goNamed(Routes.feed);
                   }),
               CupertinoDialogAction(
-                  child: Text("No"),
+                  child: const Text("No"),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })

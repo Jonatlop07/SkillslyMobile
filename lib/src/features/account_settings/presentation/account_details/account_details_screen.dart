@@ -21,8 +21,7 @@ import 'account_details_controller.dart';
 import 'account_details_state.dart';
 
 class AccountDetailsScreen extends StatelessWidget {
-  const AccountDetailsScreen({Key? key, required this.formType})
-      : super(key: key);
+  const AccountDetailsScreen({Key? key, required this.formType}) : super(key: key);
 
   final AccountDetailsFormType formType;
 
@@ -37,7 +36,7 @@ class AccountDetailsScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Mi cuenta'.hardcoded), actions: <Widget>[
         IconButton(
           onPressed: () => GoRouter.of(context).goNamed(Routes.searchUser),
-          icon: Icon(Icons.search),
+          icon: const Icon(Icons.search),
         )
       ]),
       drawer: const MainDrawer(),
@@ -60,8 +59,7 @@ class AccountDetailsContents extends ConsumerStatefulWidget {
   }
 }
 
-class _AccountDetailsContentsState
-    extends ConsumerState<AccountDetailsContents> {
+class _AccountDetailsContentsState extends ConsumerState<AccountDetailsContents> {
   final _formKey = GlobalKey<FormState>();
   final _node = FocusScopeNode();
   final _emailController = TextEditingController();
@@ -144,8 +142,7 @@ class _AccountDetailsContentsState
   Future<void> _submit(AccountDetailsState state) async {
     setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
-      final controller =
-          ref.read(accountDetailsControllerProvider(widget.formType).notifier);
+      final controller = ref.read(accountDetailsControllerProvider(widget.formType).notifier);
       final success = await controller.submit(
         UpdateUserAccountDetails(
           email: email,
@@ -183,8 +180,7 @@ class _AccountDetailsContentsState
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(
-      accountDetailsControllerProvider(widget.formType)
-          .select((state) => state.value),
+      accountDetailsControllerProvider(widget.formType).select((state) => state.value),
       (_, state) => state.showAlertDialogOnError(context),
     );
     final state = ref.watch(accountDetailsControllerProvider(widget.formType));
@@ -213,16 +209,14 @@ class _AccountDetailsContentsState
                   enabled: !state.isLoading,
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) =>
-                    !_submitted ? null : state.emailErrorText(email ?? ''),
+                validator: (email) => !_submitted ? null : state.emailErrorText(email ?? ''),
                 autocorrect: false,
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
                 keyboardAppearance: Brightness.light,
                 onEditingComplete: () => _emailEditingComplete(state),
                 inputFormatters: <TextInputFormatter>[
-                  ValidatorInputFormatter(
-                      editingValidator: EmailEditingRegexValidator()),
+                  ValidatorInputFormatter(editingValidator: EmailEditingRegexValidator()),
                 ],
                 enabled: _editing,
               ),
@@ -235,8 +229,7 @@ class _AccountDetailsContentsState
                   enabled: !state.isLoading,
                 ),
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (name) =>
-                    !_submitted ? null : state.nameErrorText(name ?? ''),
+                validator: (name) => !_submitted ? null : state.nameErrorText(name ?? ''),
                 autocorrect: false,
                 textInputAction: TextInputAction.done,
                 keyboardAppearance: Brightness.light,
@@ -307,24 +300,21 @@ class _AccountDetailsContentsState
                   : CustomTextButton(
                       text: state.editAccountDetailsButtonText,
                       style: const TextStyle(color: Palette.secondary),
-                      onPressed:
-                          state.isLoading ? null : () => _toggleEditing(),
+                      onPressed: state.isLoading ? null : () => _toggleEditing(),
                     ),
               if (_editing)
                 OutlinedActionButtonWithIcon(
                   text: state.applyAccountDetailsUpdatesButtonText,
                   color: Palette.secondary,
                   iconData: Icons.update_outlined,
-                  onPressed: state.isLoading
-                      ? null
-                      : () => _submit(state).then((_) => _toggleEditing()),
+                  onPressed:
+                      state.isLoading ? null : () => _submit(state).then((_) => _toggleEditing()),
                 ),
               gapH8,
               CustomTextButton(
                 text: state.updateCredentialsButtonText,
-                onPressed: state.isLoading
-                    ? null
-                    : () => GoRouter.of(context).goNamed(Routes.credentials),
+                onPressed:
+                    state.isLoading ? null : () => GoRouter.of(context).goNamed(Routes.credentials),
               ),
             ],
           ),

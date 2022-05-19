@@ -9,6 +9,8 @@ class Routes {
   static const account = 'account';
   static const credentials = 'credentials';
   static const feed = 'feed';
+  static const createPost = 'createPost';
+  static const postsOfUser = 'postsOfUser';
   static const posts = 'posts';
   static const conversations = 'conversations';
 }

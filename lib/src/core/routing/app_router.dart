@@ -1,20 +1,17 @@
-import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
 import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/transition_screen.dart';
-import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_screen.dart';
-import 'package:skillsly_ma/src/features/account_settings/presentation/account_credentials/account_credentials_state.dart';
 import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_screen.dart';
 import 'package:skillsly_ma/src/features/account_settings/presentation/account_details/account_details_state.dart';
 import 'package:skillsly_ma/src/features/authentication/data/auth_service.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_in/sign_in_state.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_screen.dart';
 import 'package:skillsly_ma/src/features/authentication/presentation/sign_up/sign_up_state.dart';
 import 'package:skillsly_ma/src/features/post/presenter/create_post/create_post_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/feed/feed_screen.dart';
+import 'package:skillsly_ma/src/features/post/presenter/posts_of_user/posts_of_user_screen.dart';
 
 import '../../features/chat/presentation/user_conversations/user_conversations.screen.dart';
 import 'not_found_screen.dart';
@@ -66,17 +63,34 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => TransitionScreen.createFade(
               context,
               state,
-              const CreatePostScreen(),
+              const FeedScreen(),
             ),
+            routes: [
+              GoRoute(
+                path: Routes.createPost,
+                name: Routes.createPost,
+                pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  const CreatePostScreen(),
+                ),
+              ),
+              GoRoute(
+                path: '${Routes.postsOfUser}/:ownerId',
+                name: Routes.postsOfUser,
+                pageBuilder: (context, state) => TransitionScreen.createFade(
+                  context,
+                  state,
+                  PostsOfUserScreen(ownerId: state.params['ownerId']!),
+                ),
+              ),
+            ],
           ),
           GoRoute(
             path: Routes.chat,
             name: Routes.chat,
-            pageBuilder: (context, state) => TransitionScreen.createFade(
-              context,
-              state,
-              const UserConversationsScreen()
-            ),
+            pageBuilder: (context, state) =>
+                TransitionScreen.createFade(context, state, const UserConversationsScreen()),
           ),
           GoRoute(
               path: Routes.account,

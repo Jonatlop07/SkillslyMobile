@@ -1,8 +1,5 @@
 class Message {
-  Message(
-      {required this.content,
-      required this.created_at,
-      required this.owner_user_id});
+  Message({required this.content, required this.created_at, required this.owner_user_id});
 
   final String content;
   final String created_at;

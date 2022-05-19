@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
@@ -13,8 +11,7 @@ import 'package:skillsly_ma/src/shared/state/app_user.dart';
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
 class ChatService {
-  ChatService(this._client, Ref ref)
-      : _authStateAccessor = AuthStateAccessor(ref);
+  ChatService(this._client, Ref ref) : _authStateAccessor = AuthStateAccessor(ref);
 
   final GraphQLClient _client;
   final AuthStateAccessor _authStateAccessor;
@@ -49,8 +46,7 @@ class ChatService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
   }
 
@@ -73,10 +69,7 @@ class ChatService {
     final result = await _client.mutate(
       MutationOptions(
         document: createPrivateConvesation,
-        variables: {
-          'creator_user_id': creatorUserID,
-          'member_user_id': memberUserID
-        },
+        variables: {'creator_user_id': creatorUserID, 'member_user_id': memberUserID},
       ),
     );
     print(result);
@@ -85,13 +78,11 @@ class ChatService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
   }
 
-  Future<void> createConversationMessage(
-      String content, String conversationID) async {
+  Future<void> createConversationMessage(String content, String conversationID) async {
     // print(content);
     // print(conversationID);
     final String ownerUserID = currentUser!.id;
@@ -127,8 +118,7 @@ class ChatService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
   }
 
@@ -165,8 +155,7 @@ class ChatService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
     print(result.data);
     yield ConversationCollection.getConversationsCollection(
@@ -200,13 +189,12 @@ class ChatService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
 
     yield MessageCollection.getConversationsCollection(
-            result.data!['getConversationMessages'] as List<dynamic>)
-        .messageCollection;
+      result.data!['getConversationMessages'] as List<dynamic>,
+    ).messageCollection;
   }
 
   bool isOwnerMessageUser(String ownerUserID) {
@@ -220,14 +208,13 @@ final conversationsServiceProvider = Provider<ChatService>((ref) {
   return ChatService(client, ref);
 });
 
-final conversationsListStreamProvider =
-    StreamProvider.autoDispose<List<Conversation>>((ref) {
+final conversationsListStreamProvider = StreamProvider.autoDispose<List<Conversation>>((ref) {
   final conversationsService = ref.watch(conversationsServiceProvider);
   return conversationsService.getConversationsCollection();
 });
 
-final conversationMessagesStreamProvider = StreamProvider.autoDispose
-    .family<List<Message>, String>((ref, conversationID) {
+final conversationMessagesStreamProvider =
+    StreamProvider.autoDispose.family<List<Message>, String>((ref, conversationID) {
   final conversationsService = ref.watch(conversationsServiceProvider);
   return conversationsService.getConversationMessages(conversationID);
 });
@@ -253,8 +240,7 @@ final createConversationMessageFutureProvider =
       messageInfo['content'], messageInfo['conversationID']);
 });
 
-final isOwnerMessageUserProvider =
-    ProviderFamily<bool, String>((ref, ownerUserID) {
+final isOwnerMessageUserProvider = ProviderFamily<bool, String>((ref, ownerUserID) {
   final conversationsService = ref.watch(conversationsServiceProvider);
   return conversationsService.isOwnerMessageUser(ownerUserID);
 });

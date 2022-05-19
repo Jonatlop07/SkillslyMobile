@@ -8,8 +8,7 @@ import 'package:skillsly_ma/src/features/chat/data/chat_service.dart';
 import 'package:skillsly_ma/src/features/chat/domain/message.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
-  const ChatScreen(
-      {Key? key, required this.userId, required this.conversationId})
+  const ChatScreen({Key? key, required this.userId, required this.conversationId})
       : super(key: key);
 
   final String userId;
@@ -33,8 +32,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final messagesList =
-        ref.watch(conversationMessagesStreamProvider(widget.conversationId));
+    final messagesList = ref.watch(conversationMessagesStreamProvider(widget.conversationId));
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +41,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         backgroundColor: Colors.white,
         flexibleSpace: SafeArea(
           child: Container(
-            padding: EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 16),
             child: Row(
               children: <Widget>[
                 IconButton(
@@ -73,8 +71,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     children: <Widget>[
                       Text(
                         widget.conversationId,
-                        style: const TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(
                         height: 6,
@@ -103,13 +100,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             data: (messages) => messages.isEmpty
                 ? Center(
                     child: Padding(
-                      padding: EdgeInsets.only(top: 30),
+                      padding: const EdgeInsets.only(top: 30),
                       child: Text(
-                        'No se encontraron mensajes en esta conversacion '
-                            .hardcoded,
+                        'No se encontraron mensajes en esta conversacion '.hardcoded,
                         style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.bold),
+                            color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                       ),
                     ),
                   )
@@ -120,27 +115,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return Container(
-                          padding: const EdgeInsets.only(
-                              left: 16, right: 16, top: 10, bottom: 10),
+                          padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
                           child: Align(
-                              alignment: (ref.watch(isOwnerMessageUserProvider(
-                                      messages[index].owner_user_id))
+                              alignment: (ref.watch(
+                                      isOwnerMessageUserProvider(messages[index].owner_user_id))
                                   ? Alignment.topRight
                                   : Alignment.topLeft),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  color: (ref.watch(isOwnerMessageUserProvider(
-                                          messages[index].owner_user_id))
-                                      ? Theme.of(context)
-                                          .primaryColor
-                                          .withOpacity(0.3)
+                                  color: (ref.watch(
+                                          isOwnerMessageUserProvider(messages[index].owner_user_id))
+                                      ? Theme.of(context).primaryColor.withOpacity(0.3)
                                       : Colors.grey.shade200),
                                 ),
-                                padding: EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
                                 child: Text(
                                   messages[index].content,
-                                  style: TextStyle(fontSize: 15),
+                                  style: const TextStyle(fontSize: 15),
                                 ),
                               )));
                     },
@@ -149,7 +141,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           Align(
             alignment: Alignment.bottomLeft,
             child: Container(
-              padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+              padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
               height: 60,
               width: double.infinity,
               color: Colors.white,
@@ -192,8 +184,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         "content": myController.text,
                         "conversationID": widget.conversationId
                       };
-                      ref.watch(
-                          createConversationMessageFutureProvider(messageInfo));
+                      ref.watch(createConversationMessageFutureProvider(messageInfo));
                       myController.clear();
                       GoRouter.of(context).goNamed(Routes.chat, params: {
                         "userId": widget.userId,

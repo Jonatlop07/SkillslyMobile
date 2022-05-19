@@ -1,25 +1,18 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:skillsly_ma/src/core/config/graphql_config.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
 import 'package:skillsly_ma/src/features/users/domain/search_user_details.dart';
 import 'package:skillsly_ma/src/shared/types/pagination_details.dart';
-import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 import '../../../shared/exception/request_exception.dart';
 
 class SearchService {
-  SearchService(this._client, Ref ref)
-      : _authStateAccessor = AuthStateAccessor(ref);
+  SearchService(this._client);
   final GraphQLClient _client;
-  final AuthStateAccessor _authStateAccessor;
-
-  String? get _userId => _authStateAccessor.getAuthStateController().state?.id;
 
   Future<List<SearchUserDetails>> searchUser(
-      String search_input, PaginationDetails? query_params) async {
-    final search_users = gql('''
+      String searchInput, PaginationDetails? queryParams) async {
+    final searchUsers = gql('''
       query users(\$search_params: SearchParams!){
         users(search_params: \$search_params){
           name
@@ -29,13 +22,12 @@ class SearchService {
         }
       }
     ''');
-    final result =
-        await _client.query(QueryOptions(document: search_users, variables: {
+    final result = await _client.query(QueryOptions(document: searchUsers, variables: {
       'search_params': {
-        'email': search_input,
-        'name': search_input,
-        'limit': query_params?.limit,
-        'offset': query_params?.offset
+        'email': searchInput,
+        'name': searchInput,
+        'limit': queryParams?.limit,
+        'offset': queryParams?.offset
       }
     }));
 
@@ -46,15 +38,13 @@ class SearchService {
     final users = result.data?['users'];
 
     final List<SearchUserDetails> searchedUsers = [];
-    users.forEach(
-        (user) => {searchedUsers.add(SearchUserDetails.fromJson(user))});
+    users.forEach((user) => {searchedUsers.add(SearchUserDetails.fromJson(user))});
 
     if (result.hasException || (result.isLoading && result.data != null)) {
       throw BackendRequestException(
         result.exception != null
             ? result.exception.toString()
-            : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-                .hardcoded,
+            : 'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
       );
     }
 
@@ -64,5 +54,5 @@ class SearchService {
 
 final searchServiceProvider = Provider<SearchService>((ref) {
   final client = ref.watch(graphQLClientProvider).value;
-  return SearchService(client, ref);
+  return SearchService(client);
 });

@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
-import 'package:skillsly_ma/src/core/routing/route_paths.dart';
 import 'package:skillsly_ma/src/core/routing/routes.dart';
-import 'package:skillsly_ma/src/features/account_settings/domain/user_account_details.dart';
 import 'package:skillsly_ma/src/features/chat/data/chat_service.dart';
 import 'package:skillsly_ma/src/features/users/data/search_service.dart';
 import 'package:skillsly_ma/src/features/users/domain/search_user_details.dart';
@@ -13,11 +11,10 @@ import 'package:skillsly_ma/src/shared/types/pagination_details.dart';
 import '../../../../core/routing/main_drawer.dart';
 
 class SearchUserScreen extends ConsumerStatefulWidget {
-  SearchUserScreen({Key? key}) : super(key: key);
+  const SearchUserScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _SearchUserScreenState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SearchUserScreenState();
 }
 
 class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
@@ -25,8 +22,6 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
   ScrollController controller = ScrollController();
 
   List<SearchUserDetails> searchedUsers = [];
-  bool _isLoadingUsers = true;
-  bool _moreUsersToFetch = true;
   String previousInputControllerText = '';
   int limit = 9;
   int offset = 0;
@@ -44,8 +39,8 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
 
   Future<List<SearchUserDetails>> _getUsers() {
     final searchService = ref.read(searchServiceProvider);
-    return searchService.searchUser(userInputController.text,
-        PaginationDetails(limit: limit, offset: offset));
+    return searchService.searchUser(
+        userInputController.text, PaginationDetails(limit: limit, offset: offset));
   }
 
   String get userInput {
@@ -84,19 +79,19 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
           title: Container(
               width: double.infinity,
               height: 40,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5)),
               child: Center(
                 child: TextField(
                   controller: userInputController,
                   onSubmitted: (_) => searchUsers(),
                   decoration: InputDecoration(
                       prefixIcon: IconButton(
-                        icon: Icon(Icons.search),
+                        icon: const Icon(Icons.search),
                         onPressed: searchUsers,
                       ),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: const Icon(Icons.clear),
                         onPressed: () {
                           setState(() {
                             userInputController.text = '';
@@ -110,12 +105,12 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
         ),
         drawer: const MainDrawer(),
         body: Container(
-          child: (searchedUsers.length > 0
+          child: (searchedUsers.isNotEmpty
               ? ListView.builder(
                   controller: controller,
                   itemCount: searchedUsers.length,
                   itemBuilder: (ctx, index) {
-                    return UserCard(searchedUsers[index]);
+                    return UserCard(userInfo: searchedUsers[index]);
                   },
                 )
               : Padding(
@@ -147,7 +142,7 @@ class _SearchUserScreenState extends ConsumerState<SearchUserScreen> {
 }
 
 class UserCard extends ConsumerWidget {
-  UserCard(this.userInfo);
+  const UserCard({Key? key, required this.userInfo}) : super(key: key);
 
   final SearchUserDetails userInfo;
 
@@ -196,8 +191,7 @@ class UserCard extends ConsumerWidget {
   }
 }
 
-void _showActionSheet(
-    BuildContext context, SearchUserDetails userInfo, WidgetRef ref) {
+void _showActionSheet(BuildContext context, SearchUserDetails userInfo, WidgetRef ref) {
   showCupertinoModalPopup<void>(
     context: context,
     builder: (BuildContext context) => CupertinoActionSheet(
@@ -210,8 +204,7 @@ void _showActionSheet(
         ),
         CupertinoActionSheetAction(
           onPressed: () {
-            GoRouter.of(context)
-                .goNamed(Routes.posts, params: {"id": userInfo.id});
+            GoRouter.of(context).goNamed(Routes.posts, params: {"id": userInfo.id});
           },
           child: const Text('Ver publicaciones'),
         ),

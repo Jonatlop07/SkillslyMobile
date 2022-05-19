@@ -4,6 +4,7 @@ import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skillsly_ma/src/core/common_widgets/outlined_action_button_with_icon.dart';
 import 'package:skillsly_ma/src/core/common_widgets/primary_button.dart';
 import 'package:skillsly_ma/src/core/common_widgets/responsive_center.dart';
@@ -12,7 +13,7 @@ import 'package:skillsly_ma/src/core/constants/app.sizes.dart';
 import 'package:skillsly_ma/src/core/constants/breakpoints.dart';
 import 'package:skillsly_ma/src/core/constants/palette.dart';
 import 'package:skillsly_ma/src/core/localization/string_hardcoded.dart';
-import 'package:skillsly_ma/src/core/routing/main_drawer.dart';
+import 'package:skillsly_ma/src/core/routing/routes.dart';
 import 'package:skillsly_ma/src/features/post/domain/new_post_input.dart';
 import 'package:skillsly_ma/src/features/post/domain/post_content_with_media.dart';
 import 'package:skillsly_ma/src/features/post/domain/post_privacy.dart';
@@ -33,7 +34,6 @@ class CreatePostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Nueva publicación'.hardcoded)),
-      drawer: const MainDrawer(),
       body: const _CreatePostContent(),
     );
   }
@@ -119,7 +119,8 @@ class _CreatePostContentState extends ConsumerState<_CreatePostContent> {
       VideoPlayerController? videoController;
       ChewieController? chewieController;
       if (isVideo(file.path)) {
-        videoController = VideoPlayerController.file(file)..initialize();
+        videoController = VideoPlayerController.file(file);
+        await videoController.initialize();
         chewieController = ChewieController(
           videoPlayerController: videoController,
         );
@@ -320,7 +321,12 @@ class _CreatePostContentState extends ConsumerState<_CreatePostContent> {
             PrimaryButton(
               text: state.submitButtonText,
               isLoading: state.isLoading,
-              onPressed: state.isLoading ? null : () => _submit(state),
+              onPressed: state.isLoading
+                  ? null
+                  : () async {
+                      await _submit(state);
+                      GoRouter.of(context).goNamed(Routes.feed);
+                    },
             ),
           ],
         ),
