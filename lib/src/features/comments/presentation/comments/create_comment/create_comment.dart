@@ -72,7 +72,7 @@ class _CreateCommentWidgetState extends ConsumerState<CreateCommentWidget> {
           await controller.submit(widget.post_id, commentText, media);
       if (success) {
         widget.onCommentCreated?.call();
-        GoRouter.of(context).goNamed(Routes.account);
+        GoRouter.of(context).goNamed(Routes.feed);
       }
     } else {
       setState(() {
