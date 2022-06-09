@@ -22,7 +22,7 @@ class MediaService {
       FormData formData = FormData.fromMap({'media': multipartFile});
       final endpoint = isImage(file.path) ? 'image' : 'video';
       final result = await _http.post(
-        'http://10.0.2.2:3000/api/v1/media/$endpoint',
+        'https://api.skillsly.app/api/v1/media/$endpoint',
         data: formData,
       );
       return ExternalFileDescriptor(
