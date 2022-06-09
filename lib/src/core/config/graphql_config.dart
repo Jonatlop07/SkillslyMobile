@@ -5,7 +5,7 @@ import 'package:skillsly_ma/src/shared/state/auth_state_provider.dart';
 
 final graphQLClientProvider = Provider<ValueNotifier<GraphQLClient>>((ref) {
   final String? token = ref.watch(authStateProvider.select((value) => value?.accessToken));
-  final httpLink = HttpLink("http://10.0.2.2:3000/graphql", defaultHeaders: {
+  final httpLink = HttpLink("https://api.skillsly.app/graphql", defaultHeaders: {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials': 'true',
