@@ -9,14 +9,12 @@ import 'package:skillsly_ma/src/features/authentication/domain/sign_up_details.d
 import 'package:skillsly_ma/src/shared/state/auth_state_accessor.dart';
 
 class AuthService {
-  AuthService(this._client, Ref ref)
-      : _authStateAccessor = AuthStateAccessor(ref);
+  AuthService(this._client, Ref ref) : _authStateAccessor = AuthStateAccessor(ref);
 
   final GraphQLClient _client;
   final AuthStateAccessor _authStateAccessor;
 
-  Stream<AppUser?> authStateChanges() =>
-      _authStateAccessor.getAuthStateController().stream;
+  Stream<AppUser?> authStateChanges() => _authStateAccessor.getAuthStateController().stream;
   AppUser? get currentUser => _authStateAccessor.getAuthStateController().state;
 
   bool isLoggedIn() {
@@ -48,18 +46,14 @@ class AuthService {
         variables: {'email': email, 'password': password},
       ),
     );
-
-    print(result.data?['login']);
     if (result.hasException) {
       throw BackendRequestException(result.exception.toString());
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded);
     }
-    final signInResponse =
-        SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
+    final signInResponse = SignInResponse.fromJson(result.data?['login'] as Map<String, dynamic>);
     _createNewUser(signInResponse);
   }
 
@@ -97,8 +91,8 @@ class AuthService {
     }
     if (result.isLoading && result.data != null) {
       throw BackendRequestException(
-          'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'
-              .hardcoded);
+        'El servidor tardó mucho en responder. Por favor, inténtelo de nuevo'.hardcoded,
+      );
     }
     signIn(signUpDetails.email, signUpDetails.password);
   }
